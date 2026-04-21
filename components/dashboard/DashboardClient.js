@@ -1,16 +1,18 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, lazy, Suspense } from 'react'
 import { HeroGreeting } from './HeroGreeting'
 import MissionCard from './MissionCard'
 import { StatsRow } from './StatsRow'
-import { RoadmapTimeline } from './RoadmapTimeline'
-import { SkillsGrid } from './SkillsGrid'
-import { ActivityFeed } from './ActivityFeed'
-import { InternshipWidget } from './InternshipWidget'
-import { BadgesSection } from './BadgesSection'
-import { StreakCard } from './StreakCard'
 import { toast } from 'sonner'
+
+// Lazy load heavy components
+const RoadmapTimeline = lazy(() => import('./RoadmapTimeline'))
+const BadgesSection = lazy(() => import('./BadgesSection'))
+const SkillsGrid = lazy(() => import('./SkillsGrid'))
+const ActivityFeed = lazy(() => import('./ActivityFeed'))
+const InternshipWidget = lazy(() => import('./InternshipWidget'))
+const StreakCard = lazy(() => import('./StreakCard'))
 
 export function DashboardClient({ 
   initialMission, 
@@ -72,15 +74,32 @@ export function DashboardClient({
           )}
           
           <StatsRow profile={profile} skills={skills} applicationsCount={applicationsCount || 0} />
-          <RoadmapTimeline roadmap={roadmap} currentDay={roadmap?.current_day} />
-          <SkillsGrid skills={skills || []} />
-          <BadgesSection badges={badges || []} />
+          
+          <Suspense fallback={<div className="h-32 rounded-2xl skeleton" />}>
+            <RoadmapTimeline roadmap={roadmap} currentDay={roadmap?.current_day} />
+          </Suspense>
+
+          <Suspense fallback={<div className="h-48 rounded-2xl skeleton" />}>
+            <SkillsGrid skills={skills || []} />
+          </Suspense>
+
+          <Suspense fallback={<div className="h-48 rounded-2xl skeleton" />}>
+            <BadgesSection badges={badges || []} />
+          </Suspense>
         </div>
         
         <div className="space-y-6">
-          <StreakCard profile={profile} mission={currentMission} />
-          <InternshipWidget internships={internships || []} />
-          <ActivityFeed activities={activities || []} />
+          <Suspense fallback={<div className="h-64 rounded-2xl skeleton" />}>
+            <StreakCard profile={profile} mission={currentMission} />
+          </Suspense>
+
+          <Suspense fallback={<div className="h-64 rounded-2xl skeleton" />}>
+            <InternshipWidget internships={internships || []} />
+          </Suspense>
+
+          <Suspense fallback={<div className="h-64 rounded-2xl skeleton" />}>
+            <ActivityFeed activities={activities || []} />
+          </Suspense>
         </div>
       </div>
     </div>

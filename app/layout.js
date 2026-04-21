@@ -1,31 +1,36 @@
 import { Inter, Space_Grotesk } from 'next/font/google'
 import { ThemeProvider } from 'next-themes'
 import { Toaster } from 'sonner'
-import { PageTransition } from '@/components/layout/PageTransition'
 import './globals.css'
+import QueryProvider from '@/lib/providers/QueryProvider'
+import { MobileNav } from '@/components/layout/MobileNav'
+import ServiceWorkerRegistration from '@/components/layout/ServiceWorkerRegistration'
 
-const inter = Inter({ 
+const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
-  display: 'swap'
+  display: 'swap',
+  preload: true,
+  fallback: ['system-ui', 'arial'],
+  weight: ['400', '500', '600', '700'],
 })
 
-const spaceGrotesk = Space_Grotesk({ 
+const spaceGrotesk = Space_Grotesk({
   subsets: ['latin'],
   variable: '--font-space-grotesk',
-  display: 'swap'
+  display: 'swap',
+  preload: true,
+  fallback: ['system-ui', 'arial'],
+  weight: ['600', '700', '800'],
 })
 
 export const metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://unfoldd.me'),
-  
   title: {
     default: 'Unfoldd — Unfold Your Career',
     template: '%s | Unfoldd'
   },
-  
   description: 'AI-powered career platform for engineering students. Unfold your potential through personalized roadmaps, verified skills, and smart internship matching.',
-  
   keywords: [
     'student career platform',
     'BTech internship',
@@ -36,9 +41,7 @@ export const metadata = {
     'Unfoldd',
     'internship matching India'
   ],
-  
   authors: [{ name: 'Unfoldd' }],
-  
   openGraph: {
     type: 'website',
     locale: 'en_IN',
@@ -53,7 +56,6 @@ export const metadata = {
       alt: 'Unfoldd Platform'
     }]
   },
-  
   twitter: {
     card: 'summary_large_image',
     title: 'Unfoldd',
@@ -61,7 +63,6 @@ export const metadata = {
     images: ['/og-image.png'],
     creator: '@unfoldd_me'
   },
-  
   robots: {
     index: true,
     follow: true,
@@ -73,7 +74,6 @@ export const metadata = {
       'max-snippet': -1,
     }
   },
-  
   icons: {
     icon: [
       { url: '/favicon.ico' },
@@ -82,74 +82,50 @@ export const metadata = {
     ],
     apple: '/apple-icon.png',
   },
-  
   manifest: '/manifest.json'
 }
 
-import { MobileNav } from '@/components/layout/MobileNav'
-
-
-
 export default function RootLayout({ children }) {
-
   return (
-
-    <html 
-
-      lang="en" 
-
+    <html
+      lang="en"
       suppressHydrationWarning
-
       className={`${inter.variable} ${spaceGrotesk.variable}`}
-
     >
-
-      <body className={`${inter.className} bg-[#0A0A0F] text-white antialiased`}>
-
-        <ThemeProvider
-
-          attribute="class"
-
-          defaultTheme="dark"
-
-          enableSystem={false}
-
-        >
-
-          <PageTransition>
-
+      <head>
+        <link rel="dns-prefetch" href="//img.youtube.com" />
+        <link rel="dns-prefetch" href="//www.youtube.com" />
+        <link rel="preconnect" href="https://img.youtube.com" />
+      </head>
+      <body
+        className="bg-[#0A0A0F] text-white antialiased"
+        style={{ fontFamily: 'var(--font-inter)' }}
+      >
+        <QueryProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="dark"
+            enableSystem={false}
+            disableTransitionOnChange
+          >
             {children}
-
-          </PageTransition>
-
-          <MobileNav />
-
-          <Toaster 
-
-            position="bottom-right"
-
-            toastOptions={{
-
-              style: {
-
-                background: '#12121A',
-
-                color: '#fff',
-
-                border: '1px solid rgba(108,99,255,0.2)'
-
-              }
-
-            }}
-
-          />
-
-        </ThemeProvider>
-
+            <MobileNav />
+            <Toaster
+              position="bottom-right"
+              duration={3000}
+              toastOptions={{
+                style: {
+                  background: '#12121A',
+                  color: '#fff',
+                  border: '1px solid rgba(108,99,255,0.2)',
+                  fontSize: '14px',
+                },
+              }}
+            />
+            <ServiceWorkerRegistration />
+          </ThemeProvider>
+        </QueryProvider>
       </body>
-
     </html>
-
   )
-
 }
