@@ -1,0 +1,1 @@
+export function ExamReady() { return <div>ExamReady</div>; }

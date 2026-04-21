@@ -1,0 +1,1 @@
+export function MessageComposer() { return <div>Compose</div>; }

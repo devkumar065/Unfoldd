@@ -1,0 +1,1 @@
+export function ProgressBar({ progress }) { return <div className="w-full bg-border rounded-full h-2.5"><div className="bg-purple h-2.5 rounded-full" style={{ width: (progress || 0) + '%' }}></div></div>; }

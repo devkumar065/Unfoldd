@@ -1,0 +1,1 @@
+export function EmptyState({ message }) { return <div className="p-8 text-center text-text-secondary">{message}</div>; }

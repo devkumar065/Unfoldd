@@ -1,0 +1,1 @@
+export function Modal({ isOpen, children }) { return isOpen ? <div className="fixed inset-0 bg-black/50 flex items-center justify-center"><div className="bg-card p-6 rounded-xl">{children}</div></div> : null; }

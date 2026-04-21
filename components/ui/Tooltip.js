@@ -1,0 +1,1 @@
+export function Tooltip({ children, content }) { return <div className="relative group">{children}<div className="absolute hidden group-hover:block bg-black text-white text-xs p-1 rounded -top-8 left-1/2 transform -translate-x-1/2">{content}</div></div>; }

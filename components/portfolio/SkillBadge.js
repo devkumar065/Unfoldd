@@ -1,0 +1,1 @@
+export function SkillBadge() { return <div>Badge</div>; }

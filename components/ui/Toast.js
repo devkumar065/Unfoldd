@@ -1,0 +1,1 @@
+export function Toast({ message }) { return <div className="bg-card border border-border p-4 rounded-xl shadow-lg">{message}</div>; }

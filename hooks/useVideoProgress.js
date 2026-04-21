@@ -1,0 +1,1 @@
+export function useVideoProgress() { return { progress: 0 }; }

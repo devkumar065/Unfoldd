@@ -1,0 +1,1 @@
+export function CountUp({ end }) { return <span>{end}</span>; }

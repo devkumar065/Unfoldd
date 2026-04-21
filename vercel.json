@@ -1,0 +1,39 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/check-streaks",
+      "schedule": "0 0 * * *"
+    },
+    {
+      "path": "/api/cron/send-reminders?slot=morning",
+      "schedule": "0 8 * * *"
+    },
+    {
+      "path": "/api/cron/send-reminders?slot=afternoon",
+      "schedule": "0 14 * * *"
+    },
+    {
+      "path": "/api/cron/send-reminders?slot=evening",
+      "schedule": "0 20 * * *"
+    },
+    {
+      "path": "/api/cron/weekly-summary",
+      "schedule": "0 23 * * 0"
+    },
+    {
+      "path": "/api/cron/generate-challenge",
+      "schedule": "0 1 * * *"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Powered-By",
+          "value": "Unfoldd"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,1 @@
+export function UserTable() { return <div>Users</div>; }

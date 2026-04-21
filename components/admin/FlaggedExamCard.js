@@ -1,0 +1,1 @@
+export function FlaggedExamCard() { return <div>Flagged Exam</div>; }

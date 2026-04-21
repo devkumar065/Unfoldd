@@ -1,0 +1,1 @@
+export function useStreak() { return { streak: 0 }; }

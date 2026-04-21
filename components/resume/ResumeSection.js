@@ -1,0 +1,1 @@
+export function ResumeSection() { return <div>Section</div>; }

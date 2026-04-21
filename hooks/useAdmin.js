@@ -1,0 +1,1 @@
+export function useAdmin() { return { isAdmin: false }; }
