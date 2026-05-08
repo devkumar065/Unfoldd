@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
+import { IndianRupee, CheckCircle2, Lock, GraduationCap } from 'lucide-react'
 
 export default function PricingSection() {
   const [yearly, setYearly] = useState(false)
@@ -73,8 +74,8 @@ export default function PricingSection() {
       
       <div className="max-w-6xl mx-auto relative z-10">
         <div className="text-center mb-16">
-          <div className="inline-block px-4 py-1.5 rounded-full border border-purple-500/30 bg-purple-500/10 text-purple-400 text-[10px] font-black uppercase tracking-widest mb-6 shadow-sm">
-            💰 Simple Pricing
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-purple-500/30 bg-purple-500/10 text-purple-400 text-[10px] font-black uppercase tracking-widest mb-6 shadow-sm">
+            <IndianRupee size={12} /> Simple Pricing
           </div>
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-8 tracking-tight" style={{ fontFamily: 'Space Grotesk' }}>
             Invest In Your Future
@@ -126,9 +127,9 @@ export default function PricingSection() {
                   <li key={j} className={`flex items-start gap-3 text-sm font-medium ${f.included ? 'text-white/80' : 'text-white/20'}`}>
                     <span className={f.included ? (plan.popular ? 'text-purple-400' : 'text-cyan-400') : 'text-white/20'}>
                       {f.included ? (
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="mt-0.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        <CheckCircle2 size={16} strokeWidth={3} className="mt-0.5" />
                       ) : (
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="mt-0.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                        <Lock size={16} strokeWidth={3} className="mt-0.5" />
                       )}
                     </span>
                     <span className={f.included ? '' : 'line-through decoration-white/20'}>{f.text}</span>
@@ -146,9 +147,14 @@ export default function PricingSection() {
         </div>
 
         <div className="flex flex-wrap items-center justify-center gap-6 mt-16 text-center">
-          {['🔒 256-bit encryption', '✅ Cancel anytime', '🎓 Upgrade when ready'].map((badge, i) => (
-            <div key={i} className="text-white/40 text-[10px] font-black uppercase tracking-[0.2em] bg-white/5 px-4 py-2 rounded-xl border border-white/5">
-              {badge}
+          {[
+            { icon: Lock, text: '256-bit encryption' },
+            { icon: CheckCircle2, text: 'Cancel anytime' },
+            { icon: GraduationCap, text: 'Upgrade when ready' }
+          ].map((badge, i) => (
+            <div key={i} className="text-white/40 text-[10px] font-black uppercase tracking-[0.2em] bg-white/5 px-4 py-2 rounded-xl border border-white/5 flex items-center gap-2">
+              <badge.icon size={12} />
+              {badge.text}
             </div>
           ))}
         </div>

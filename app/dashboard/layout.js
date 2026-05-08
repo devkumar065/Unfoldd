@@ -1,57 +1,60 @@
-import { cache } from 'react'
-import { redirect } from 'next/navigation'
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
+import { createServerComponentClient }
+  from '@supabase/auth-helpers-nextjs'
 import { cookies } from 'next/headers'
+import { redirect } from 'next/navigation'
 import Sidebar from '@/components/layout/Sidebar'
-import { Navbar } from '@/components/layout/Navbar'
-import { MobileNav } from '@/components/layout/MobileNav'
-import Prefetcher from '@/components/layout/Prefetcher'
+import Navbar from '@/components/layout/Navbar'
+import MobileNav from '@/components/layout/MobileNav'
 
-// Cache user profile for entire request
-const getCachedUser = cache(async () => {
-  const supabase = createServerComponentClient({ cookies })
-  const { data: { session } } = await supabase.auth.getSession()
-  if (!session?.user) return null
+export default async function DashboardLayout({ 
+  children 
+}) {
+  const supabase = createServerComponentClient(
+    { cookies })
 
+  const { data: { user } } = 
+    await supabase.auth.getUser()
+
+  if (!user) redirect('/auth/login')
+
+  // Fetch minimal profile for layout
   const { data: profile } = await supabase
     .from('profiles')
-    .select('id, full_name, email, avatar_url, target_role, is_premium, streak_count, xp_points, level, onboarding_completed, notification_token')
-    .eq('id', session.user.id)
+    .select(`
+      id, full_name, avatar_url, target_role,
+      streak_count, xp_points, level,
+      is_premium, premium_plan,
+      onboarding_completed
+    `)
+    .eq('id', user.id)
     .single()
 
-  return { user: session.user, profile }
-})
-
-export default async function DashboardLayout({ children }) {
-  const userData = await getCachedUser()
-
-  if (!userData) {
-    redirect('/auth/login')
-  }
-
-  if (!userData.profile?.onboarding_completed) {
+  if (!profile) redirect('/auth/login')
+  
+  if (!profile.onboarding_completed) {
     redirect('/onboarding')
   }
 
   return (
-    <div className="flex h-screen bg-[#0A0A0F] overflow-hidden">
-      <Prefetcher />
-      {/* Sidebar — static, no re-render */}
-      <Sidebar profile={userData.profile} />
+    <div className="flex h-screen bg-[#0A0A0F] 
+      overflow-hidden">
       
-      {/* Main content */}
-      <div className="flex-1 flex flex-col overflow-hidden relative">
-        <Navbar />
+      {/* Sidebar with profile data */}
+      <div className="hidden md:flex flex-shrink-0">
+        <Sidebar profile={profile} />
+      </div>
+
+      <div className="flex-1 flex flex-col 
+        overflow-hidden min-w-0">
+        <Navbar profile={profile} />
         
-        {/* Page content with scroll */}
-        <main className="flex-1 overflow-y-auto overflow-x-hidden p-4 md:p-6 lg:p-8">
-          {/* Instant page transition container */}
-          <div className="min-h-full">
-            {children}
-          </div>
+        <main className="flex-1 overflow-y-auto
+          overflow-x-hidden pb-20 md:pb-0">
+          {children}
         </main>
       </div>
 
+      {/* Mobile nav — only in dashboard */}
       <MobileNav />
     </div>
   )

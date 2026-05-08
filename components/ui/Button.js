@@ -57,3 +57,4 @@ const Button = React.forwardRef(({ className, variant, size, fullWidth, asChild 
 Button.displayName = "Button"
 
 export { Button, buttonVariants }
+export default Button

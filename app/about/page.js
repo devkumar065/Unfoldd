@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import LandingNavbar from '@/components/landing/LandingNavbar'
 import LandingFooter from '@/components/landing/LandingFooter'
 import Link from 'next/link'
+import { TrendingDown, TrendingUp, Target, Shield, Rocket, X, Check } from 'lucide-react'
 
 export default function AboutPage() {
   return (
@@ -49,12 +50,14 @@ export default function AboutPage() {
             </p>
           </motion.div>
           <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="bg-[#12121A] border border-red-500/20 rounded-[3rem] p-10 relative overflow-hidden shadow-[0_0_50px_rgba(239,68,68,0.05)]">
-            <div className="text-5xl mb-6">📉</div>
+            <div className="w-14 h-14 bg-red-500/10 rounded-2xl flex items-center justify-center text-red-500 mb-6">
+              <TrendingDown size={32} />
+            </div>
             <h3 className="text-2xl font-bold text-white mb-4">The Reality</h3>
             <ul className="space-y-4 text-white/60 font-medium">
-              <li className="flex gap-3"><span className="text-red-500">✗</span> Syllabus updated 5 years ago</li>
-              <li className="flex gap-3"><span className="text-red-500">✗</span> Focus on exams, not building</li>
-              <li className="flex gap-3"><span className="text-red-500">✗</span> 1000s of generic certificates with no value</li>
+              <li className="flex gap-3 items-center"><X size={16} className="text-red-500" /> Syllabus updated 5 years ago</li>
+              <li className="flex gap-3 items-center"><X size={16} className="text-red-500" /> Focus on exams, not building</li>
+              <li className="flex gap-3 items-center"><X size={16} className="text-red-500" /> 1000s of generic certificates with no value</li>
             </ul>
           </motion.div>
         </div>
@@ -63,12 +66,14 @@ export default function AboutPage() {
       <section className="py-20 px-6">
         <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
           <motion.div initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="bg-gradient-to-br from-purple-900/20 to-[#12121A] border border-purple-500/30 rounded-[3rem] p-10 relative overflow-hidden shadow-[0_0_50px_rgba(108,99,255,0.1)] order-2 md:order-1">
-            <div className="text-5xl mb-6">📈</div>
+            <div className="w-14 h-14 bg-purple-500/10 rounded-2xl flex items-center justify-center text-purple-400 mb-6">
+              <TrendingUp size={32} />
+            </div>
             <h3 className="text-2xl font-bold text-white mb-4">Our Approach</h3>
             <ul className="space-y-4 text-white/80 font-medium">
-              <li className="flex gap-3"><span className="text-green-400">✓</span> AI-tailored 90-day roadmaps</li>
-              <li className="flex gap-3"><span className="text-green-400">✓</span> Anti-cheat proctored skill verification</li>
-              <li className="flex gap-3"><span className="text-green-400">✓</span> Direct matching with top companies</li>
+              <li className="flex gap-3 items-center"><Check size={16} className="text-green-400" /> AI-tailored 90-day roadmaps</li>
+              <li className="flex gap-3 items-center"><Check size={16} className="text-green-400" /> Anti-cheat proctored skill verification</li>
+              <li className="flex gap-3 items-center"><Check size={16} className="text-green-400" /> Direct matching with top companies</li>
             </ul>
           </motion.div>
           <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="space-y-6 order-1 md:order-2">
@@ -87,18 +92,24 @@ export default function AboutPage() {
         <div className="max-w-4xl mx-auto text-center space-y-10">
           <h2 className="text-3xl md:text-5xl font-black text-white tracking-tight mb-12" style={{ fontFamily: 'Space Grotesk' }}>Our Core Values</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-[#12121A] border border-white/5 p-8 rounded-3xl">
-              <div className="text-3xl mb-4">🎯</div>
+            <div className="bg-[#12121A] border border-white/5 p-8 rounded-3xl group hover:border-purple-500/30 transition-all">
+              <div className="w-12 h-12 bg-purple-500/10 rounded-xl flex items-center justify-center text-purple-400 mb-4 mx-auto group-hover:scale-110 transition-transform">
+                <Target size={24} />
+              </div>
               <h3 className="text-white font-bold mb-2">Students First</h3>
               <p className="text-sm text-white/50">Our pricing and features are designed to democratize access to elite tech careers.</p>
             </div>
-            <div className="bg-[#12121A] border border-white/5 p-8 rounded-3xl">
-              <div className="text-3xl mb-4">🛡️</div>
+            <div className="bg-[#12121A] border border-white/5 p-8 rounded-3xl group hover:border-cyan-500/30 transition-all">
+              <div className="w-12 h-12 bg-cyan-500/10 rounded-xl flex items-center justify-center text-cyan-400 mb-4 mx-auto group-hover:scale-110 transition-transform">
+                <Shield size={24} />
+              </div>
               <h3 className="text-white font-bold mb-2">Radical Honesty</h3>
               <p className="text-sm text-white/50">We don&apos;t sell fake promises. We verify real skills through rigorous testing.</p>
             </div>
-            <div className="bg-[#12121A] border border-white/5 p-8 rounded-3xl">
-              <div className="text-3xl mb-4">🚀</div>
+            <div className="bg-[#12121A] border border-white/5 p-8 rounded-3xl group hover:border-orange-500/30 transition-all">
+              <div className="w-12 h-12 bg-orange-500/10 rounded-xl flex items-center justify-center text-orange-400 mb-4 mx-auto group-hover:scale-110 transition-transform">
+                <Rocket size={24} />
+              </div>
               <h3 className="text-white font-bold mb-2">Results Only</h3>
               <p className="text-sm text-white/50">Completion certificates are dead. We measure our success solely by your job offers.</p>
             </div>

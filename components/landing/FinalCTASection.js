@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react'
 import { gsap } from 'gsap'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
+import { Rocket, GraduationCap, Building2 } from 'lucide-react'
 
 export default function FinalCTASection() {
   const sectionRef = useRef(null)
@@ -45,9 +46,9 @@ export default function FinalCTASection() {
         <motion.div 
           animate={{ y: [0, -10, 0] }} 
           transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }} 
-          className="w-24 h-24 bg-white/5 border border-white/10 rounded-[2rem] flex items-center justify-center text-5xl mx-auto mb-10 shadow-2xl backdrop-blur-md"
+          className="w-24 h-24 bg-white/5 border border-white/10 rounded-[2rem] flex items-center justify-center mx-auto mb-10 shadow-2xl backdrop-blur-md"
         >
-          🚀
+          <Rocket size={48} className="text-purple-400" />
         </motion.div>
         
         <h2 className="text-5xl md:text-7xl lg:text-8xl font-black text-white mb-8 tracking-tighter" style={{ fontFamily: 'Space Grotesk' }}>
@@ -71,7 +72,7 @@ export default function FinalCTASection() {
               <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-cyan-600" />
               <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-cyan-400 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               <span className="relative flex items-center justify-center gap-3">
-                🎓 Start as Student <span className="text-[10px] bg-white/20 px-2 py-1 rounded-full border border-white/30">FREE</span>
+                <GraduationCap size={24} /> Start as Student <span className="text-[10px] bg-white/20 px-2 py-1 rounded-full border border-white/30">FREE</span>
               </span>
             </motion.button>
           </Link>
@@ -82,7 +83,7 @@ export default function FinalCTASection() {
               whileTap={{ scale: 0.97 }}
               className="w-full sm:w-auto px-12 py-6 rounded-[2rem] text-white font-black text-xl uppercase tracking-widest border-2 border-white/20 hover:border-white/40 hover:bg-white/5 backdrop-blur-md transition-all duration-300 flex items-center justify-center gap-3"
             >
-              🏢 Hire Verified Talent
+              <Building2 size={24} className="text-cyan-400" /> Hire Verified Talent
             </motion.button>
           </Link>
         </div>

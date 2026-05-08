@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Autoplay } from 'swiper/modules'
+import { Star, Flame, CheckCircle2 } from 'lucide-react'
 import 'swiper/css'
 
 const testimonials = [
@@ -60,8 +61,8 @@ export default function TestimonialsSection() {
 
       <div className="max-w-7xl mx-auto relative z-10">
         <div className="text-center mb-20">
-          <div className="inline-block px-4 py-1.5 rounded-full border border-yellow-500/30 bg-yellow-500/10 text-yellow-400 text-xs font-black uppercase tracking-widest mb-6 shadow-sm">
-            ⭐ Student Stories
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-yellow-500/30 bg-yellow-500/10 text-yellow-400 text-xs font-black uppercase tracking-widest mb-6 shadow-sm">
+            <Star size={12} className="fill-current" /> Student Stories
           </div>
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-white tracking-tight" style={{ fontFamily: 'Space Grotesk' }}>
             Real Results From{' '}
@@ -92,8 +93,8 @@ export default function TestimonialsSection() {
               >
                 <div className="absolute inset-0 rounded-[2.5rem] bg-yellow-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
                 
-                <div className="flex gap-1 mb-6">
-                  {[...Array(t.rating)].map((_, j) => <span key={j} className="text-yellow-400 text-lg">★</span>)}
+                <div className="flex gap-1 mb-6 text-yellow-400">
+                  {[...Array(t.rating)].map((_, j) => <Star key={j} size={16} className="fill-current" />)}
                 </div>
 
                 <p className="text-white/80 text-base leading-relaxed flex-1 mb-8 font-medium italic relative">
@@ -105,11 +106,15 @@ export default function TestimonialsSection() {
                 <div className="grid grid-cols-2 gap-3 mb-8">
                   <div className="bg-white/5 border border-white/5 rounded-2xl p-3 flex items-center justify-between group-hover:border-orange-500/30 transition-colors">
                     <span className="text-[10px] font-black uppercase text-white/30 tracking-widest">Streak</span>
-                    <span className="text-orange-400 font-black flex items-center gap-1"><span className="text-lg leading-none">🔥</span> {t.streak}</span>
+                    <span className="text-orange-400 font-black flex items-center gap-1.5">
+                      <Flame size={14} /> {t.streak}
+                    </span>
                   </div>
                   <div className="bg-white/5 border border-white/5 rounded-2xl p-3 flex items-center justify-between group-hover:border-green-400/30 transition-colors">
                     <span className="text-[10px] font-black uppercase text-white/30 tracking-widest">Verified</span>
-                    <span className="text-green-400 font-black flex items-center gap-1"><span className="text-lg leading-none">✅</span> {t.skills}</span>
+                    <span className="text-green-400 font-black flex items-center gap-1.5">
+                      <CheckCircle2 size={14} /> {t.skills}
+                    </span>
                   </div>
                 </div>
 

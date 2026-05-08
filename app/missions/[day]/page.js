@@ -7,6 +7,19 @@ import { supabase } from '@/lib/supabase/client'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 import { toast } from 'sonner'
+import { 
+  CheckCircle2, 
+  RefreshCw, 
+  BookOpen, 
+  Hammer, 
+  Send, 
+  Video, 
+  Play, 
+  Lightbulb, 
+  Lock,
+  ChevronLeft,
+  ChevronRight
+} from 'lucide-react'
 
 export default function MissionDetailPage({ params }) {
   const { day } = params
@@ -80,12 +93,15 @@ export default function MissionDetailPage({ params }) {
           <span className="bg-purple-500/20 text-purple-400 text-sm font-bold px-3 py-1 rounded-full">
             Day {displayMission.day_number}
           </span>
-          <span className={`text-xs px-2 py-1 rounded-full font-medium ${
+          <span className={`text-xs px-2.5 py-1 rounded-full font-bold flex items-center gap-1.5 ${
             displayMission.status === 'completed'
               ? 'bg-green-500/20 text-green-400'
               : 'bg-yellow-500/20 text-yellow-400'
           }`}>
-            {displayMission.status === 'completed' ? '✅ Completed' : '🔄 In Progress'}
+            {displayMission.status === 'completed' 
+              ? <><CheckCircle2 size={12} /> Completed</> 
+              : <><RefreshCw size={12} className="animate-spin-slow" /> In Progress</>
+            }
           </span>
           {isSaving && (
             <span className="text-xs text-white/30 flex items-center gap-1">
@@ -107,7 +123,8 @@ export default function MissionDetailPage({ params }) {
 
       <FullTaskCard
         type="learn"
-        label="📚 Learn"
+        icon={BookOpen}
+        label="Learn"
         color="blue"
         data={displayMission.learn_task}
         isChecked={displayCompletion.learn}
@@ -118,7 +135,8 @@ export default function MissionDetailPage({ params }) {
 
       <FullTaskCard
         type="build"
-        label="🛠️ Build"
+        icon={Hammer}
+        label="Build"
         color="green"
         data={displayMission.build_task}
         isChecked={displayCompletion.build}
@@ -129,7 +147,8 @@ export default function MissionDetailPage({ params }) {
 
       <FullTaskCard
         type="apply"
-        label="📩 Apply"
+        icon={Send}
+        label="Apply"
         color="orange"
         data={displayMission.apply_task}
         isChecked={displayCompletion.apply}
@@ -140,15 +159,18 @@ export default function MissionDetailPage({ params }) {
 
       {displayMission.video_id && (
         <div className="glass rounded-2xl p-6 border border-cyan-500/20">
-          <h3 className="text-white font-bold mb-3">
-            📺 Today&apos;s Video Lesson
+          <h3 className="text-white font-bold mb-3 flex items-center gap-2">
+            <Video size={18} className="text-cyan-400" /> Today&apos;s Video Lesson
           </h3>
           <Link href={`/missions/${day}/video`}>
             <motion.button
               whileHover={{ scale: 1.02 }}
-              className="w-full py-3 rounded-xl bg-cyan-500/20 border border-cyan-500/30 text-cyan-400 font-semibold text-sm hover:bg-cyan-500/30 transition-colors"
+              className="w-full py-3 rounded-xl bg-cyan-500/20 border border-cyan-500/30 text-cyan-400 font-semibold text-sm hover:bg-cyan-500/30 transition-colors flex items-center justify-center gap-2"
             >
-              {displayMission.video_completed ? '✅ Video Watched — Rewatch' : '▶ Watch Video to Unlock Test'}
+              {displayMission.video_completed 
+                ? <><CheckCircle2 size={16} /> Video Watched — Rewatch</> 
+                : <><Play size={16} /> Watch Video to Unlock Test</>
+              }
             </motion.button>
           </Link>
         </div>
@@ -156,13 +178,13 @@ export default function MissionDetailPage({ params }) {
 
       <div className="flex justify-between gap-4">
         {parseInt(day) > 1 && (
-          <Link href={`/missions/${parseInt(day)-1}`} className="flex-1 py-3 rounded-xl border border-white/10 text-white/50 hover:text-white text-center text-sm transition-colors">
-            ← Day {parseInt(day)-1}
+          <Link href={`/missions/${parseInt(day)-1}`} className="flex-1 py-3 rounded-xl border border-white/10 text-white/50 hover:text-white text-center text-sm transition-colors flex items-center justify-center gap-2">
+            <ChevronLeft size={16} /> Day {parseInt(day)-1}
           </Link>
         )}
         {displayMission.status === 'completed' && (
-          <Link href={`/missions/${parseInt(day)+1}`} className="flex-1 py-3 rounded-xl bg-purple-500/20 border border-purple-500/30 text-purple-400 text-center text-sm hover:bg-purple-500/30 transition-colors">
-            Day {parseInt(day)+1} →
+          <Link href={`/missions/${parseInt(day)+1}`} className="flex-1 py-3 rounded-xl bg-purple-500/20 border border-purple-500/30 text-purple-400 text-center text-sm hover:bg-purple-500/30 transition-colors flex items-center justify-center gap-2">
+            Day {parseInt(day)+1} <ChevronRight size={16} />
           </Link>
         )}
       </div>
@@ -170,7 +192,7 @@ export default function MissionDetailPage({ params }) {
   )
 }
 
-function FullTaskCard({ type, label, color, data, isChecked, isSaving, onToggle, isCompleted }) {
+function FullTaskCard({ type, icon: Icon, label, color, data, isChecked, isSaving, onToggle, isCompleted }) {
   const colorMap = {
     blue: { bg: 'bg-blue-500/10', border: 'border-blue-500/20', text: 'text-blue-400', badge: 'bg-blue-500/20 text-blue-400' },
     green: { bg: 'bg-green-500/10', border: 'border-green-500/20', text: 'text-green-400', badge: 'bg-green-500/20 text-green-400' },
@@ -196,20 +218,23 @@ function FullTaskCard({ type, label, color, data, isChecked, isSaving, onToggle,
             )}
           </AnimatePresence>
         </button>
-        <span className={`text-xs font-bold px-3 py-1 rounded-full ${c.badge}`}>{label}</span>
-        <h3 className={`font-bold flex-1 ${isChecked ? 'line-through text-white/30' : 'text-white'}`}>{data?.title}</h3>
-        {data?.estimated_minutes && <span className="text-white/30 text-sm flex-shrink-0">~{data.estimated_minutes} min</span>}
+        <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black tracking-widest ${c.badge}`}>
+          <Icon size={12} />
+          {label.toUpperCase()}
+        </div>
+        <h3 className={`font-bold flex-1 text-sm ${isChecked ? 'line-through text-white/30' : 'text-white'}`}>{data?.title}</h3>
+        {data?.estimated_minutes && <span className="text-white/30 text-xs flex-shrink-0 font-medium">~{data.estimated_minutes} min</span>}
       </div>
 
       <div className="p-5 space-y-4">
         {data?.description && <p className="text-white/60 text-sm leading-relaxed">{data.description}</p>}
         {type === 'learn' && data?.what_to_focus_on?.length > 0 && (
           <div>
-            <p className="text-white/40 text-xs uppercase tracking-wider mb-2">Focus on:</p>
-            <ul className="space-y-1">
+            <p className="text-white/40 text-[10px] uppercase tracking-widest font-black mb-3">What to focus on:</p>
+            <ul className="space-y-2">
               {data.what_to_focus_on.map((item, i) => (
-                <li key={i} className="flex items-center gap-2 text-sm text-white/60">
-                  <span className={`w-1.5 h-1.5 rounded-full bg-${color}-400 flex-shrink-0`} />
+                <li key={i} className="flex items-center gap-2.5 text-sm text-white/70 group">
+                  <div className={`w-1.5 h-1.5 rounded-full ${c.text} bg-current flex-shrink-0 group-hover:scale-125 transition-transform`} />
                   {item}
                 </li>
               ))}
@@ -218,43 +243,52 @@ function FullTaskCard({ type, label, color, data, isChecked, isSaving, onToggle,
         )}
         {type === 'build' && data?.steps?.length > 0 && (
           <div>
-            <p className="text-white/40 text-xs uppercase tracking-wider mb-2">Steps:</p>
-            <ol className="space-y-2">
+            <p className="text-white/40 text-[10px] uppercase tracking-widest font-black mb-3">Implementation Steps:</p>
+            <ol className="space-y-3">
               {data.steps.map((step, i) => (
-                <li key={i} className="flex items-start gap-3 text-sm text-white/60">
-                  <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${c.badge}`}>{i + 1}</span>
-                  {step}
+                <li key={i} className="flex items-start gap-4 text-sm text-white/70">
+                  <span className={`w-6 h-6 rounded-lg flex items-center justify-center text-xs font-black flex-shrink-0 ${c.badge}`}>{i + 1}</span>
+                  <span className="pt-0.5">{step}</span>
                 </li>
               ))}
             </ol>
           </div>
         )}
         {type === 'build' && data?.expected_output && (
-          <div className="bg-white/5 rounded-xl p-3">
-            <p className="text-white/30 text-xs uppercase tracking-wider mb-1">Expected Output:</p>
-            <p className="text-white/60 text-sm">{data.expected_output}</p>
+          <div className="bg-white/[0.03] rounded-xl p-4 border border-white/5">
+            <p className="text-white/30 text-[10px] uppercase tracking-widest font-black mb-2">Expected Output:</p>
+            <p className="text-white/60 text-sm leading-relaxed">{data.expected_output}</p>
           </div>
         )}
         {type === 'learn' && data?.resources?.length > 0 && (
           <div>
-            <p className="text-white/40 text-xs uppercase tracking-wider mb-2">Resources:</p>
-            <div className="space-y-2">
+            <p className="text-white/40 text-[10px] uppercase tracking-widest font-black mb-3">Resources & Documentation:</p>
+            <div className="grid grid-cols-1 gap-2">
               {data.resources.map((r, i) => (
-                <a key={i} href={r.url} target="_blank" rel="noopener noreferrer" className={`flex items-center gap-2 text-sm ${c.text} hover:opacity-80 transition-opacity`}>
-                  <span className="text-xs bg-white/5 px-2 py-0.5 rounded capitalize">{r.type}</span>
-                  {r.title}
-                  <span className="text-white/20">↗</span>
+                <a key={i} href={r.url} target="_blank" rel="noopener noreferrer" className={`flex items-center justify-between p-3 rounded-xl bg-white/[0.03] border border-white/5 hover:border-${color}-500/30 transition-all group`}>
+                  <div className="flex items-center gap-3">
+                    <span className="text-[10px] bg-white/5 px-2 py-1 rounded-md capitalize font-bold text-white/40">{r.type}</span>
+                    <span className="text-sm font-medium text-white/80 group-hover:text-white transition-colors">{r.title}</span>
+                  </div>
+                  <Send size={12} className={`text-white/20 group-hover:${c.text} -rotate-45 transition-all`} />
                 </a>
               ))}
             </div>
           </div>
         )}
         {type === 'apply' && data?.link && (
-          <div className="space-y-2">
-            {data.why_match && <p className="text-white/40 text-xs italic">💡 {data.why_match}</p>}
+          <div className="space-y-3">
+            {data.why_match && (
+              <div className="flex items-start gap-3 p-4 rounded-xl bg-purple-500/5 border border-purple-500/10">
+                <Lightbulb size={16} className="text-purple-400 shrink-0 mt-0.5" />
+                <p className="text-white/60 text-xs leading-relaxed">
+                  <span className="text-purple-300 font-bold">Why you matched:</span> {data.why_match}
+                </p>
+              </div>
+            )}
             <a href={data.link} target="_blank" rel="noopener noreferrer">
-              <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className={`w-full py-3 rounded-xl ${c.badge} font-semibold text-sm hover:opacity-90 transition-opacity`}>
-                Apply at {data.company} →
+              <motion.button whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }} className={`w-full py-4 rounded-xl ${c.badge} font-black text-sm hover:opacity-90 transition-opacity flex items-center justify-center gap-2 shadow-lg shadow-black/20`}>
+                <Send size={16} /> Apply at {data.company}
               </motion.button>
             </a>
           </div>
@@ -274,11 +308,17 @@ function MissionDetailSkeleton() {
 
 function MissionNotFound({ day }) {
   return (
-    <div className="max-w-3xl mx-auto p-6 text-center">
-      <div className="text-6xl mb-4">🔒</div>
-      <h2 className="text-white font-bold text-xl mb-2">Day {day} Not Available Yet</h2>
-      <p className="text-white/50 mb-6">Complete previous missions to unlock this day.</p>
-      <Link href="/dashboard" className="bg-purple-600 text-white px-6 py-3 rounded-xl font-semibold">Back to Dashboard</Link>
+    <div className="max-w-3xl mx-auto p-6 text-center py-20">
+      <div className="w-20 h-20 rounded-3xl bg-white/5 flex items-center justify-center mx-auto mb-6">
+        <Lock size={40} className="text-white/20" />
+      </div>
+      <h2 className="text-white font-black text-2xl mb-2">Day {day} Not Available Yet</h2>
+      <p className="text-white/40 mb-8 max-w-xs mx-auto">Complete your current missions to unlock the next steps in your journey.</p>
+      <Link href="/dashboard">
+        <button className="bg-purple-600 hover:bg-purple-500 text-white px-8 py-3 rounded-xl font-bold transition-all shadow-lg shadow-purple-600/20">
+          Back to Dashboard
+        </button>
+      </Link>
     </div>
   )
 }

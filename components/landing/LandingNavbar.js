@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronDown, Menu, X } from 'lucide-react'
+import { ChevronDown, Menu, X, GraduationCap, Building2 } from 'lucide-react'
 import Link from 'next/link'
 import { gsap } from 'gsap'
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin'
@@ -82,14 +82,19 @@ export default function LandingNavbar() {
 
         <div className="hidden md:flex items-center gap-3">
           <div className="relative group">
-            <button className="text-sm text-white/70 hover:text-white transition-colors flex items-center gap-1 px-4 py-2 rounded-lg border border-white/10 hover:border-white/20">
+            <Link
+              href="/auth/login"
+              className="text-sm text-white/70 hover:text-white transition-colors flex items-center gap-1 px-4 py-2 rounded-lg border border-white/10 hover:border-white/20"
+            >
               Sign In
               <ChevronDown size={14} />
-            </button>
+            </Link>
             
-            <div className="absolute top-full right-0 mt-2 w-48 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 bg-[#12121A] border border-white/10 rounded-xl overflow-hidden shadow-2xl shadow-purple-500/10">
+            <div className="absolute top-full right-0 mt-2 w-52 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 bg-[#12121A] border border-white/10 rounded-xl overflow-hidden shadow-2xl shadow-purple-500/10">
               <Link href="/auth/login" className="flex items-center gap-3 px-4 py-3 hover:bg-white/5 transition-colors group/item">
-                <div className="w-8 h-8 rounded-lg bg-purple-500/20 flex items-center justify-center">🎓</div>
+                <div className="w-8 h-8 rounded-lg bg-purple-500/20 flex items-center justify-center text-purple-400">
+                  <GraduationCap size={18} />
+                </div>
                 <div>
                   <div className="text-white text-sm font-medium">Student Login</div>
                   <div className="text-white/40 text-xs">Continue learning</div>
@@ -98,8 +103,10 @@ export default function LandingNavbar() {
               
               <div className="h-px bg-white/5" />
               
-              <Link href="/company/login" className="flex items-center gap-3 px-4 py-3 hover:bg-white/5 transition-colors">
-                <div className="w-8 h-8 rounded-lg bg-cyan-500/20 flex items-center justify-center">🏢</div>
+              <Link href="/company/login" className="flex items-center gap-3 px-4 py-3 hover:bg-white/5 transition-colors group/item">
+                <div className="w-8 h-8 rounded-lg bg-cyan-500/20 flex items-center justify-center text-cyan-400">
+                  <Building2 size={18} />
+                </div>
                 <div>
                   <div className="text-white text-sm font-medium">Company Login</div>
                   <div className="text-white/40 text-xs">Find talent</div>
@@ -144,11 +151,11 @@ export default function LandingNavbar() {
               ))}
               
               <div className="flex flex-col gap-3 pt-4">
-                <Link href="/auth/login" className="text-center py-3 border border-white/10 rounded-xl text-white/70 hover:text-white">
-                  🎓 Student Login
+                <Link href="/auth/login" className="text-center py-3 border border-white/10 rounded-xl text-white/70 hover:text-white flex items-center justify-center gap-2">
+                  <GraduationCap size={18} className="text-purple-400" /> Student Login
                 </Link>
-                <Link href="/company/login" className="text-center py-3 border border-white/10 rounded-xl text-white/70 hover:text-white">
-                  🏢 Company Login
+                <Link href="/company/login" className="text-center py-3 border border-white/10 rounded-xl text-white/70 hover:text-white flex items-center justify-center gap-2">
+                  <Building2 size={18} className="text-cyan-400" /> Company Login
                 </Link>
                 <Link href="/auth/signup" className="text-center py-3 bg-gradient-to-r from-purple-600 to-cyan-600 rounded-xl text-white font-semibold">
                   Get Started Free →

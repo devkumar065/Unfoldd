@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react'
 import { gsap } from 'gsap'
 import { motion } from 'framer-motion'
+import { BookOpen, Compass, Send, AlertCircle } from 'lucide-react'
 
 export default function ProblemSection() {
   const sectionRef = useRef(null)
@@ -69,7 +70,8 @@ export default function ProblemSection() {
 
   const problems = [
     {
-      emoji: '📚',
+      icon: BookOpen,
+      color: 'text-purple-400',
       title: 'College Teaches Theory',
       desc: 'Your syllabus is 5 years behind industry standards. You graduate knowing theory but cannot build a real project or crack any technical interview.',
       stat: '67% of students',
@@ -77,7 +79,8 @@ export default function ProblemSection() {
       className: 'problem-card-left'
     },
     {
-      emoji: '🧭',
+      icon: Compass,
+      color: 'text-cyan-400',
       title: 'Zero Clear Direction',
       desc: 'React or Vue? Node or Django? Everyone gives conflicting advice. You start 10 different courses and finish none of them.',
       stat: '10+ courses',
@@ -85,7 +88,8 @@ export default function ProblemSection() {
       className: 'problem-card-center'
     },
     {
-      emoji: '📩',
+      icon: Send,
+      color: 'text-orange-400',
       title: 'Applications Into Void',
       desc: 'You apply to 50 internships. Get 2 replies. No portfolio to show your work. No verified skills. Just a resume with no proof.',
       stat: '2% response rate',
@@ -100,8 +104,8 @@ export default function ProblemSection() {
 
       <div className="max-w-6xl mx-auto relative z-10">
         <div className="problem-header text-center mb-20">
-          <div className="inline-block px-4 py-1.5 rounded-full border border-red-500/30 bg-red-500/10 text-red-400 text-xs font-black uppercase tracking-widest mb-6 shadow-sm">
-            😔 The Problem
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-red-500/30 bg-red-500/10 text-red-400 text-xs font-black uppercase tracking-widest mb-6 shadow-sm">
+            <AlertCircle size={12} /> The Problem
           </div>
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-6 tracking-tight" style={{ fontFamily: 'Space Grotesk' }}>
             Sound Familiar?
@@ -117,7 +121,7 @@ export default function ProblemSection() {
               <div className="absolute inset-0 rounded-3xl bg-red-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
               
               <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-3xl mb-8 group-hover:scale-110 transition-transform duration-500">
-                {p.emoji}
+                <p.icon size={32} className={p.color} />
               </div>
               <h3 className="text-white font-bold text-2xl mb-4 tracking-tight" style={{ fontFamily: 'Space Grotesk' }}>
                 {p.title}

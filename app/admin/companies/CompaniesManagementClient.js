@@ -20,9 +20,9 @@ export default function CompaniesManagementClient({ initialCompanies }) {
   return (
     <div className="space-y-6 animate-in fade-in duration-500 pb-20">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h2 className="text-2xl font-bold text-white tracking-tight" style={{ fontFamily: 'Space Grotesk' }}>Hiring Partners 🏢</h2>
-          <p className="text-xs text-white/40 mt-1">Manage registered companies and their hiring limits.</p>
+        <div className="flex items-center gap-3">
+          <h2 className="text-2xl font-bold text-white tracking-tight" style={{ fontFamily: 'Space Grotesk' }}>Hiring Partners</h2>
+          <Building2 size={24} className="text-purple-400" />
         </div>
         <Button className="bg-white text-black font-black px-6 rounded-xl flex items-center gap-2">
           <Plus size={18} /> Invite Company

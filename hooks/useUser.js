@@ -1,77 +1,115 @@
 'use client'
-import { useEffect, useState } from 'react'
+
+import { useState, useEffect } from 'react'
+import { createClientComponentClient }
+  from '@supabase/auth-helpers-nextjs'
 import { useRouter } from 'next/navigation'
-import { supabase } from '../lib/supabase/client'
-import { useUserStore } from '../store/userStore'
 
 export function useUser() {
-  const { user, profile, setUser, setProfile, isLoading, setLoading, clearUser } = useUserStore()
-  const [error, setError] = useState(null)
+  const [user, setUser] = useState(null)
+  const [profile, setProfile] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const supabase = createClientComponentClient()
   const router = useRouter()
 
   useEffect(() => {
     let mounted = true
 
-    async function fetchSession() {
+    async function loadUser() {
       try {
-        const { data: { session }, error: sessionError } = await supabase.auth.getSession()
-        
-        if (sessionError) throw sessionError
+        // Get session
+        const { data: { session }, error: sessionError } 
+          = await supabase.auth.getSession()
 
-        if (session?.user) {
-          if (mounted) setUser(session.user)
-          const { data: profileData, error: profileError } = await supabase
-            .from('profiles')
-            .select('*')
-            .eq('id', session.user.id)
-            .single()
-
-          if (profileError) {
-            if (profileError.code !== 'PGRST116') throw profileError // Allow no profile initially
-          }
-
+        if (sessionError || !session) {
           if (mounted) {
-            setProfile(profileData || null)
-            if (profileData && profileData.onboarding_completed === false) {
-              router.push('/onboarding')
-            }
+            setLoading(false)
+            setUser(null)
+            setProfile(null)
           }
-        } else {
-          if (mounted) clearUser()
+          return
         }
-      } catch (err) {
-        if (mounted) setError(err)
-      } finally {
+
+        if (mounted) setUser(session.user)
+
+        // Get profile
+        const { data: profileData, error: profileError } 
+          = await supabase
+          .from('profiles')
+          .select(`
+            id, full_name, email, avatar_url,
+            college, year, branch, target_role,
+            is_premium, premium_plan,
+            streak_count, longest_streak,
+            xp_points, level,
+            onboarding_completed,
+            last_active_at, notification_token,
+            daily_time_minutes
+          `)
+          .eq('id', session.user.id)
+          .single()
+
+        if (profileError) {
+          console.error('Profile fetch error:', 
+            profileError)
+          // Profile might not exist yet
+          if (mounted) {
+            setProfile(null)
+            setLoading(false)
+          }
+          return
+        }
+
+        if (mounted) {
+          setProfile(profileData)
+          setLoading(false)
+
+          // Update last_active_at
+          supabase.from('profiles')
+            .update({ 
+              last_active_at: new Date().toISOString() 
+            })
+            .eq('id', session.user.id)
+            .then(() => {}) // fire and forget
+        }
+
+      } catch(err) {
+        console.error('useUser error:', err)
         if (mounted) setLoading(false)
       }
     }
 
-    fetchSession()
+    loadUser()
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (session?.user) {
-        setUser(session.user)
-        const { data: profileData } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', session.user.id)
-          .single()
-        setProfile(profileData || null)
-        if (profileData && profileData.onboarding_completed === false) {
-          router.push('/onboarding')
+    // Listen for auth changes
+    const { data: { subscription } } = 
+      supabase.auth.onAuthStateChange(
+        async (event, session) => {
+          if (!mounted) return
+          
+          if (event === 'SIGNED_OUT' || !session) {
+            setUser(null)
+            setProfile(null)
+            setLoading(false)
+            return
+          }
+
+          if (event === 'SIGNED_IN' || 
+              event === 'TOKEN_REFRESHED') {
+            setUser(session.user)
+            loadUser()
+          }
         }
-      } else {
-        clearUser()
-        router.push('/auth/login')
-      }
-      setLoading(false)
-    })
+      )
 
     return () => {
       mounted = false
-      subscription?.unsubscribe()
+      subscription.unsubscribe()
     }
-  }, [setUser, setProfile, setLoading, clearUser, router])
+  }, [])
 
-  return { user, profile, loading: isLoading, error }
+  return { user, profile, loading }
 }
+
+// Also export as default for compatibility
+export default useUser

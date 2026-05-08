@@ -5,7 +5,7 @@ import { motion } from 'framer-motion'
 import { CheckCircle2, Star } from 'lucide-react'
 import { cn } from '@/lib/utils/cn'
 
-export function RoadmapTimeline({ roadmap, currentDay = 1 }) {
+export default function RoadmapTimeline({ roadmap, currentDay = 1 }) {
   const scrollRef = useRef(null)
 
   useEffect(() => {

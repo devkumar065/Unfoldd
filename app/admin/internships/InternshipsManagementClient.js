@@ -32,9 +32,9 @@ export default function InternshipsManagementClient({ initialInternships }) {
   return (
     <div className="space-y-6 animate-in fade-in duration-500 pb-20">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h2 className="text-2xl font-bold text-white tracking-tight" style={{ fontFamily: 'Space Grotesk' }}>Internship Postings 💼</h2>
-          <p className="text-xs text-white/40 mt-1">Global management of all internship opportunities.</p>
+        <div className="flex items-center gap-3">
+          <h2 className="text-2xl font-bold text-white tracking-tight" style={{ fontFamily: 'Space Grotesk' }}>Internship Postings</h2>
+          <Briefcase size={24} className="text-purple-400" />
         </div>
         <Button className="bg-purple-600 hover:bg-purple-700 text-white font-bold px-6 rounded-xl flex items-center gap-2">
           <Plus size={18} /> Add Posting

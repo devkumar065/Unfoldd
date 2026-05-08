@@ -3,7 +3,32 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Upload, ChevronRight, ChevronLeft, CheckCircle2, Calendar as CalendarIcon, Clock, Briefcase, Code, Shield, Brain, Zap, Palette, Trash2, Loader2, Sparkles } from 'lucide-react'
+import { 
+  Upload, 
+  ChevronRight, 
+  ChevronLeft, 
+  CheckCircle2, 
+  Calendar as CalendarIcon, 
+  Clock, 
+  Briefcase, 
+  Code, 
+  Shield, 
+  Brain, 
+  Zap, 
+  Palette, 
+  Trash2, 
+  Loader2, 
+  Sparkles,
+  User,
+  FileText,
+  Target,
+  Flame,
+  Rocket,
+  TrendingUp,
+  Gem,
+  Hand,
+  Dumbbell
+} from 'lucide-react'
 import { toast } from 'sonner'
 import Confetti from 'react-confetti'
 import { useWindowSize } from 'react-use'
@@ -13,27 +38,27 @@ import { Button } from '@/components/ui/Button'
 import { cn } from '@/lib/utils/cn'
 
 const STEPS = [
-  { id: 1, title: 'Profile', icon: '👤' },
-  { id: 2, title: 'Schedule', icon: '📅' },
-  { id: 3, title: 'Exams', icon: '📝' },
-  { id: 4, title: 'Role', icon: '🎯' },
-  { id: 5, title: 'Time', icon: '⏱️' }
+  { id: 1, title: 'Profile', icon: User },
+  { id: 2, title: 'Schedule', icon: CalendarIcon },
+  { id: 3, title: 'Exams', icon: FileText },
+  { id: 4, title: 'Role', icon: Target },
+  { id: 5, title: 'Time', icon: Clock }
 ]
 
 const ROLES = [
-  { id: 'fullstack', icon: Code, title: 'Full Stack Developer', desc: 'Build complete web applications', salary: '₹8-20 LPA', demand: 'High Demand 🔥' },
-  { id: 'sde', icon: Briefcase, title: 'Software Engineer (SDE)', desc: 'Core programming & algorithms', salary: '₹10-25 LPA', demand: 'Very High Demand 🚀' },
-  { id: 'cybersecurity', icon: Shield, title: 'Cybersecurity Analyst', desc: 'Protect systems & hunt threats', salary: '₹6-18 LPA', demand: 'Growing Fast 📈' },
-  { id: 'data_science', icon: Brain, title: 'Data Science / ML', desc: 'Build AI models & analyze data', salary: '₹10-30 LPA', demand: 'Highest Demand 💎' },
-  { id: 'devops', icon: Zap, title: 'DevOps / Cloud', desc: 'Automate & scale infrastructure', salary: '₹8-22 LPA', demand: 'High Demand 🔥' },
-  { id: 'uiux', icon: Palette, title: 'UI/UX Designer', desc: 'Design beautiful experiences', salary: '₹5-15 LPA', demand: 'Steady Demand ✨' }
+  { id: 'fullstack', icon: Code, title: 'Full Stack Developer', desc: 'Build complete web applications', salary: '₹8-20 LPA', demand: 'High Demand', demandIcon: Flame, demandColor: 'text-orange-400' },
+  { id: 'sde', icon: Briefcase, title: 'Software Engineer (SDE)', desc: 'Core programming & algorithms', salary: '₹10-25 LPA', demand: 'Very High Demand', demandIcon: Rocket, demandColor: 'text-purple-400' },
+  { id: 'cybersecurity', icon: Shield, title: 'Cybersecurity Analyst', desc: 'Protect systems & hunt threats', salary: '₹6-18 LPA', demand: 'Growing Fast', demandIcon: TrendingUp, demandColor: 'text-cyan-400' },
+  { id: 'data_science', icon: Brain, title: 'Data Science / ML', desc: 'Build AI models & analyze data', salary: '₹10-30 LPA', demand: 'Highest Demand', demandIcon: Gem, demandColor: 'text-blue-400' },
+  { id: 'devops', icon: Zap, title: 'DevOps / Cloud', desc: 'Automate & scale infrastructure', salary: '₹8-22 LPA', demand: 'High Demand', demandIcon: Flame, demandColor: 'text-orange-400' },
+  { id: 'uiux', icon: Palette, title: 'UI/UX Designer', desc: 'Design beautiful experiences', salary: '₹5-15 LPA', demand: 'Steady Demand', demandIcon: Sparkles, demandColor: 'text-pink-400' }
 ]
 
 const TIME_OPTIONS = [
-  { id: 30, label: '30 Minutes', desc: 'Quick learner — basics + 1 task', pace: '🏃 Light pace | Ready in 6 months', recommended: false },
-  { id: 60, label: '1 Hour', desc: 'Balanced — theory + practice daily', pace: '⚡ Steady pace | Ready in 3 months', recommended: true },
-  { id: 90, label: '1.5 Hours', desc: 'Dedicated — deep dives + projects', pace: '🔥 Fast pace | Ready in 2 months', recommended: false },
-  { id: 120, label: '2+ Hours', desc: 'Intensive — full stack daily grind', pace: '🚀 Rocket pace | Ready in 6 weeks', recommended: false }
+  { id: 30, label: '30 Minutes', desc: 'Quick learner — basics + 1 task', pace: 'Light pace | Ready in 6 months', paceIcon: Zap, recommended: false },
+  { id: 60, label: '1 Hour', desc: 'Balanced — theory + practice daily', pace: 'Steady pace | Ready in 3 months', paceIcon: Zap, recommended: true },
+  { id: 90, label: '1.5 Hours', desc: 'Dedicated — deep dives + projects', pace: 'Fast pace | Ready in 2 months', paceIcon: Flame, recommended: false },
+  { id: 120, label: '2+ Hours', desc: 'Intensive — full stack daily grind', pace: 'Rocket pace | Ready in 6 weeks', paceIcon: Rocket, recommended: false }
 ]
 
 export default function Onboarding() {
@@ -272,6 +297,7 @@ export default function Onboarding() {
           {STEPS.map((s, idx) => {
             const isCompleted = step > s.id
             const isCurrent = step === s.id
+            const Icon = s.icon
             return (
               <div key={s.id} className="relative z-10 flex flex-col items-center gap-2">
                 <motion.div 
@@ -287,7 +313,7 @@ export default function Onboarding() {
                     "text-text-muted bg-card"
                   )}
                 >
-                  {isCompleted ? <CheckCircle2 size={18} /> : s.icon}
+                  {isCompleted ? <CheckCircle2 size={18} /> : <Icon size={18} />}
                 </motion.div>
                 <span className={cn("text-xs font-medium absolute -bottom-6 whitespace-nowrap hidden sm:block", isCurrent ? "text-purple" : "text-text-muted")}>
                   {s.title}
@@ -315,7 +341,10 @@ export default function Onboarding() {
               {step === 1 && (
                 <div className="space-y-8">
                   <div className="text-center md:text-left">
-                    <h2 className="text-3xl font-display font-bold text-white mb-2">Tell us about yourself 👋</h2>
+                    <div className="flex items-center justify-center md:justify-start gap-3 mb-2">
+                      <h2 className="text-3xl font-display font-bold text-white">Tell us about yourself</h2>
+                      <Hand size={32} className="text-yellow-400" />
+                    </div>
                     <p className="text-text-secondary">We&apos;ll personalize your entire roadmap based on this.</p>
                   </div>
 
@@ -374,7 +403,10 @@ export default function Onboarding() {
               {step === 2 && (
                 <div className="space-y-8">
                   <div className="text-center md:text-left">
-                    <h2 className="text-3xl font-display font-bold text-white mb-2">When are your classes? 📅</h2>
+                    <div className="flex items-center justify-center md:justify-start gap-3 mb-2">
+                      <h2 className="text-3xl font-display font-bold text-white">When are your classes?</h2>
+                      <CalendarIcon size={32} className="text-cyan-400" />
+                    </div>
                     <p className="text-text-secondary">We&apos;ll schedule your daily missions around your timetable.</p>
                   </div>
 
@@ -431,7 +463,10 @@ export default function Onboarding() {
               {step === 3 && (
                 <div className="space-y-8">
                   <div className="text-center md:text-left">
-                    <h2 className="text-3xl font-display font-bold text-white mb-2">Any upcoming exams? 📝</h2>
+                    <div className="flex items-center justify-center md:justify-start gap-3 mb-2">
+                      <h2 className="text-3xl font-display font-bold text-white">Any upcoming exams?</h2>
+                      <FileText size={32} className="text-orange-400" />
+                    </div>
                     <p className="text-text-secondary">We automatically reduce your mission load 3 days before any exam.</p>
                   </div>
 
@@ -475,7 +510,7 @@ export default function Onboarding() {
                             className="p-8 text-center border-2 border-dashed border-border rounded-2xl text-text-muted"
                           >
                             <CalendarIcon size={32} className="mx-auto mb-3 opacity-50" />
-                            <p>No exams added yet. Missions will run at full intensity! 💪</p>
+                            <p className="flex items-center justify-center gap-2">No exams added yet. Missions will run at full intensity! <Dumbbell size={16} className="text-purple-400" /></p>
                           </motion.div>
                         ) : (
                           formData.examDates.map((exam, i) => (
@@ -512,13 +547,17 @@ export default function Onboarding() {
               {step === 4 && (
                 <div className="space-y-6">
                   <div className="text-center md:text-left">
-                    <h2 className="text-3xl font-display font-bold text-white mb-2">What&apos;s your target role? 🎯</h2>
+                    <div className="flex items-center justify-center md:justify-start gap-3 mb-2">
+                      <h2 className="text-3xl font-display font-bold text-white">What&apos;s your target role?</h2>
+                      <Target size={32} className="text-purple-400" />
+                    </div>
                     <p className="text-text-secondary">Your entire 90-day roadmap will be built around this single goal.</p>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {ROLES.map(role => {
                       const isSelected = formData.targetRole === role.id
+                      const DemandIcon = role.demandIcon
                       return (
                         <motion.div
                           key={role.id}
@@ -543,7 +582,10 @@ export default function Onboarding() {
                               <p className="text-sm text-text-secondary mb-3 leading-snug">{role.desc}</p>
                               <div className="flex flex-wrap gap-2">
                                 <span className="text-xs px-2 py-1 rounded bg-card border border-border text-white font-medium">{role.salary}</span>
-                                <span className="text-xs px-2 py-1 rounded bg-orange-500/10 border border-orange-500/20 text-orange-500 font-medium">{role.demand}</span>
+                                <span className={cn("text-xs px-2 py-1 rounded bg-white/5 border border-white/10 font-bold flex items-center gap-1.5", role.demandColor)}>
+                                  <DemandIcon size={12} />
+                                  {role.demand}
+                                </span>
                               </div>
                             </div>
                           </div>
@@ -563,13 +605,17 @@ export default function Onboarding() {
               {step === 5 && (
                 <div className="space-y-8">
                   <div className="text-center md:text-left">
-                    <h2 className="text-3xl font-display font-bold text-white mb-2">How much time daily? ⏱️</h2>
+                    <div className="flex items-center justify-center md:justify-start gap-3 mb-2">
+                      <h2 className="text-3xl font-display font-bold text-white">How much time daily?</h2>
+                      <Clock size={32} className="text-cyan-400" />
+                    </div>
                     <p className="text-text-secondary">Be honest — consistency beats intensity. You can change this later.</p>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {TIME_OPTIONS.map(opt => {
                       const isSelected = formData.dailyTime === opt.id
+                      const PaceIcon = opt.paceIcon
                       return (
                         <motion.div
                           key={opt.id}
@@ -589,7 +635,10 @@ export default function Onboarding() {
                           )}
                           <h3 className="font-display font-bold text-2xl text-white mb-1">{opt.label}</h3>
                           <p className="text-sm font-medium text-purple-light mb-2">{opt.desc}</p>
-                          <p className="text-xs text-text-secondary">{opt.pace}</p>
+                          <div className="flex items-center gap-1.5 text-xs text-text-secondary">
+                            <PaceIcon size={12} className="text-purple-400" />
+                            <span>{opt.pace}</span>
+                          </div>
                           
                           {isSelected && (
                             <motion.div layoutId="timeSelectIndicator" className="absolute inset-0 border-2 border-purple rounded-2xl pointer-events-none" />

@@ -6,6 +6,52 @@ import useMissionStore from '@/store/missionStore'
 import { useUser } from '@/hooks/useUser'
 import Link from 'next/link'
 import { toast } from 'sonner'
+import { BookOpen, Hammer, Send, Target, CheckCircle2, ChevronDown, ChevronUp, Link as LinkIcon } from 'lucide-react'
+
+const taskConfig = {
+  learn: {
+    icon: BookOpen,
+    label: 'LEARN',
+    iconColor: 'text-blue-400',
+    bg: 'bg-blue-500/15',
+    border: 'border-blue-500/20',
+    badgeBg: 'bg-blue-500/20',
+    badgeText: 'text-blue-400'
+  },
+  build: {
+    icon: Hammer,
+    label: 'BUILD',
+    iconColor: 'text-green-400',
+    bg: 'bg-green-500/15',
+    border: 'border-green-500/20',
+    badgeBg: 'bg-green-500/20',
+    badgeText: 'text-green-400'
+  },
+  apply: {
+    icon: Send,
+    label: 'APPLY',
+    iconColor: 'text-orange-400',
+    bg: 'bg-orange-500/15',
+    border: 'border-orange-500/20',
+    badgeBg: 'bg-orange-500/20',
+    badgeText: 'text-orange-400'
+  }
+}
+
+function TaskBadge({ type }) {
+  const config = taskConfig[type]
+  const Icon = config.icon
+  return (
+    <div className={`flex items-center gap-1.5 
+      px-2.5 py-1 rounded-lg ${config.badgeBg}`}>
+      <Icon size={11} className={config.iconColor} />
+      <span className={`text-[10px] font-bold 
+        tracking-wider ${config.badgeText}`}>
+        {config.label}
+      </span>
+    </div>
+  )
+}
 
 export default function MissionCard({ initialMission }) {
   const { user } = useUser()
@@ -18,7 +64,6 @@ export default function MissionCard({ initialMission }) {
     setMission
   } = useMissionStore()
 
-  // Initialize store with server-fetched mission
   useEffect(() => {
     if (initialMission) {
       setMission(initialMission)
@@ -45,9 +90,9 @@ export default function MissionCard({ initialMission }) {
   }
 
   const tasks = [
-    { type: 'learn', label: 'LEARN', color: 'bg-blue-500/20 text-blue-400', data: mission.learn_task, icon: '📚' },
-    { type: 'build', label: 'BUILD', color: 'bg-green-500/20 text-green-400', data: mission.build_task, icon: '🛠️' },
-    { type: 'apply', label: 'APPLY', color: 'bg-orange-500/20 text-orange-400', data: mission.apply_task, icon: '📩' }
+    { type: 'learn', data: mission.learn_task },
+    { type: 'build', data: mission.build_task },
+    { type: 'apply', data: mission.apply_task }
   ]
 
   return (
@@ -112,7 +157,8 @@ export default function MissionCard({ initialMission }) {
 
       {isCompleted ? (
         <div className="flex items-center justify-center gap-2 py-3 rounded-xl bg-green-500/10 border border-green-500/20">
-          <span className="text-green-400 font-semibold">✅ Mission Complete!</span>
+          <CheckCircle2 size={16} className="text-green-400" />
+          <span className="text-green-400 font-semibold text-sm">Mission Complete!</span>
         </div>
       ) : (
         <Link href={`/missions/${mission.day_number}`}>
@@ -153,13 +199,13 @@ function TaskRow({ task, isChecked, isCompleted, isSaving, onToggle, dayNumber }
           </AnimatePresence>
         </button>
 
-        <span className={`text-xs font-bold px-2 py-0.5 rounded ${task.color}`}>{task.icon} {task.label}</span>
+        <TaskBadge type={task.type} />
         <span className={`text-sm flex-1 ${isChecked ? 'line-through text-white/30' : 'text-white/80'}`}>
-          {task.data?.title || `${task.label} task`}
+          {task.data?.title || `${task.type} task`}
         </span>
         {task.data?.estimated_minutes && <span className="text-white/30 text-xs flex-shrink-0">~{task.data.estimated_minutes}m</span>}
         <button onClick={() => setExpanded(!expanded)} className="text-white/20 hover:text-white/50 transition-colors text-xs ml-1">
-          {expanded ? '▲' : '▼'}
+          {expanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
         </button>
       </div>
 
@@ -172,14 +218,14 @@ function TaskRow({ task, isChecked, isCompleted, isSaving, onToggle, dayNumber }
                 <div className="space-y-1">
                   {task.data.resources.slice(0, 3).map((r, i) => (
                     <a key={i} href={r.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-xs text-purple-400 hover:text-purple-300">
-                      🔗 {r.title}
+                      <LinkIcon size={10} /> {r.title}
                     </a>
                   ))}
                 </div>
               )}
               {task.type === 'apply' && task.data?.link && (
                 <a href={task.data.link} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-xs bg-orange-500/20 text-orange-400 px-3 py-1.5 rounded-lg hover:bg-orange-500/30 transition-colors mt-1">
-                  Apply at {task.data.company} →
+                  <Send size={12} /> Apply at {task.data.company} →
                 </a>
               )}
               <div className="mt-2">
@@ -219,7 +265,11 @@ function MissionCountdown() {
 function MissionCardEmpty() {
   return (
     <div className="glass rounded-2xl p-8 text-center border border-white/5">
-      <div className="text-4xl mb-3">🎯</div>
+      <div className="flex justify-center mb-3">
+        <div className="w-12 h-12 rounded-2xl bg-purple-500/10 flex items-center justify-center text-purple-400">
+          <Target size={24} />
+        </div>
+      </div>
       <h3 className="text-white font-bold mb-2">No Mission Yet</h3>
       <p className="text-white/40 text-sm">Complete your previous mission to unlock the next one.</p>
     </div>

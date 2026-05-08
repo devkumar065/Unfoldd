@@ -1,80 +1,114 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Flame, AlertCircle } from 'lucide-react'
-import { cn } from '@/lib/utils/cn'
+import { Flame } from 'lucide-react'
 
-export function StreakCard({ profile, mission }) {
-  const streak = profile?.streak_count || 0
-  const isDoneToday = mission?.status === 'completed'
-  const isUrgent = streak === 0 && !isDoneToday
+const DAYS = ['M', 'T', 'W', 'T', 'F', 'S', 'S']
 
-  const getMessage = () => {
-    if (isUrgent) return "Complete today's mission to start your streak!"
-    if (streak === 0) return "Start your streak today! 🌱"
-    if (streak < 7) return "Great start! Keep going 💪"
-    if (streak < 30) return "On fire! Don't stop 🔥"
-    return "Legendary consistency! 🏆"
+export default function StreakCard({ 
+  streak = 0, 
+  longestStreak = 0 
+}) {
+  const today = new Date().getDay()
+  // Convert: 0=Sun → 6, 1=Mon → 0, etc
+  const todayIndex = today === 0 ? 6 : today - 1
+
+  function getMessage(streak) {
+    if (streak === 0) return 'Start your streak today!'
+    if (streak < 7) return 'Great start! Keep going'
+    if (streak < 30) return "You're on fire!"
+    if (streak < 60) return 'Incredible consistency!'
+    return 'Legendary dedication!'
   }
 
-  const days = Array.from({ length: 7 }).map((_, i) => {
-    const isToday = i === 6
-    if (isToday) return isDoneToday ? 'done' : 'today'
-    return (streak > (6 - i)) ? 'done' : 'missed'
-  })
-
   return (
-    <motion.div 
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      className={cn(
-        "glass p-6 rounded-3xl border flex flex-col items-center text-center bg-card relative overflow-hidden",
-        isUrgent ? "border-red-500/50 shadow-[0_0_20px_rgba(239,68,68,0.15)]" : "border-border"
-      )}
-    >
-      <div className={cn(
-        "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 rounded-full blur-3xl opacity-20 pointer-events-none",
-        isUrgent ? "bg-red-500" : "bg-orange-500"
-      )} />
-
-      <p className="text-sm font-bold text-text-muted uppercase tracking-wider mb-2 relative z-10">Day Streak</p>
+    <div className="bg-[#12121A] border border-white/5 
+      rounded-2xl p-5">
       
-      <div className="flex items-center justify-center gap-3 mb-4 relative z-10">
-        <h2 className="text-6xl font-display font-bold text-white tracking-tighter leading-none">{streak}</h2>
-        <motion.div
-          animate={streak > 0 ? { scale: [1, 1.1, 1], rotate: [0, -5, 5, 0] } : {}}
-          transition={{ repeat: Infinity, duration: 2 }}
-        >
-          <Flame size={48} className={cn(streak > 0 ? "text-orange-500 drop-shadow-[0_0_15px_rgba(249,115,22,0.5)]" : "text-text-muted")} />
-        </motion.div>
+      {/* Header */}
+      <div className="flex items-center gap-2 mb-4">
+        <div className="w-7 h-7 rounded-lg 
+          bg-orange-500/10 flex items-center 
+          justify-center">
+          <Flame size={14} className="text-orange-400" />
+        </div>
+        <h3 className="text-white font-bold text-sm">
+          Day Streak
+        </h3>
       </div>
 
-      <div className="flex gap-2 mb-4 relative z-10">
-        {days.map((state, i) => (
-          <div 
-            key={i} 
-            className={cn(
-              "w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold border transition-colors",
-              state === 'done' ? "bg-orange-500 text-white border-orange-500 shadow-[0_0_10px_rgba(249,115,22,0.4)]" :
-              state === 'today' ? "bg-card border-cyan text-cyan border-dashed" :
-              "bg-background border-border text-text-muted opacity-50"
-            )}
+      {/* Streak number */}
+      <div className="flex items-end gap-3 mb-4">
+        <div className="flex items-baseline gap-2">
+          <span 
+            className="text-5xl font-black text-white"
+            style={{ fontFamily: 'Space Grotesk' }}>
+            {streak}
+          </span>
+          <motion.div
+            animate={streak > 0 
+              ? { scale: [1, 1.2, 1] }
+              : {}}
+            transition={{ 
+              duration: 2, 
+              repeat: Infinity 
+            }}
           >
-            {['M','T','W','T','F','S','S'][i]}
+            <Flame 
+              size={28} 
+              className={streak > 0 
+                ? 'text-orange-400' 
+                : 'text-white/20'} 
+            />
+          </motion.div>
+        </div>
+      </div>
+
+      {/* Days of week */}
+      <div className="flex gap-1.5 mb-3">
+        {DAYS.map((day, i) => (
+          <div key={i} className="flex-1 flex 
+            flex-col items-center gap-1">
+            <div className={`w-full aspect-square 
+              rounded-lg flex items-center 
+              justify-center text-[10px] font-bold
+              transition-colors
+              ${i === todayIndex 
+                ? 'bg-purple-600 text-white ring-1 ring-purple-400/50'
+                : i < todayIndex && streak > (todayIndex - i)
+                ? 'bg-orange-500/30 text-orange-400'
+                : 'bg-white/5 text-white/20'
+              }`}>
+              {day}
+            </div>
           </div>
         ))}
       </div>
 
-      <div className={cn("px-4 py-2 rounded-xl text-xs font-bold w-full relative z-10", 
-        isUrgent ? "bg-red-500/10 text-red-500 border border-red-500/20 flex items-center justify-center gap-2" : "bg-background border border-border text-text-secondary"
-      )}>
-        {isUrgent && <AlertCircle size={14} />}
-        {getMessage()}
-      </div>
-      
-      {!isUrgent && (
-        <p className="text-xs text-text-muted mt-3 relative z-10">Best streak: {profile?.longest_streak || 0} days</p>
+      {/* Best streak */}
+      <p className="text-white/30 text-xs mb-2">
+        Best: {longestStreak} days
+      </p>
+
+      {/* Message */}
+      <p className={`text-xs font-medium
+        ${streak === 0 
+          ? 'text-white/40' 
+          : 'text-orange-400'}`}>
+        {getMessage(streak)}
+      </p>
+
+      {/* Warning if 0 */}
+      {streak === 0 && (
+        <div className="mt-3 bg-orange-500/10 
+          border border-orange-500/20 rounded-xl 
+          p-2.5">
+          <p className="text-orange-400 text-[10px]
+            text-center font-medium">
+            Complete today&apos;s mission to start your streak!
+          </p>
+        </div>
       )}
-    </motion.div>
+    </div>
   )
 }

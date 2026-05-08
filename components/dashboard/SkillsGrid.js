@@ -1,170 +1,295 @@
 'use client'
 
-import { useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { CheckCircle2, ShieldAlert, X, Copy, QrCode, ExternalLink, Loader2, Brain } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { motion } from 'framer-motion'
+import { 
+  Star, CheckCircle, Clock, 
+  Plus, Search 
+} from 'lucide-react'
+import { createClientComponentClient }
+  from '@supabase/auth-helpers-nextjs'
 import { toast } from 'sonner'
-import { Button } from '@/components/ui/Button'
-import { cn } from '@/lib/utils/cn'
 
-export function SkillsGrid({ skills = [] }) {
+export default function SkillsGrid({ 
+  initialSkills = [], 
+  userId 
+}) {
+  const [skills, setSkills] = useState(initialSkills)
   const [filter, setFilter] = useState('all')
-  const [examModal, setExamModal] = useState({ open: false, skill: null, link: '', expires: '', loading: false })
+  const [search, setSearch] = useState('')
+  const [examModal, setExamModal] = useState(null)
+  const [generatingExam, setGeneratingExam] = 
+    useState(null)
 
-  const filteredSkills = skills.filter(s => {
-    if (filter === 'learned') return s.is_learned && !s.is_verified
-    if (filter === 'verified') return s.is_verified
-    return true
-  })
+  // Update when props change
+  useEffect(() => {
+    setSkills(initialSkills)
+  }, [initialSkills])
 
-  const handleVerifyClick = async (skill) => {
-    setExamModal({ open: true, skill, link: '', expires: '', loading: true })
+  async function generateExam(skill) {
+    setGeneratingExam(skill.id)
     try {
       const res = await fetch('/api/exam/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ skillId: skill.id, skillName: skill.skill_name })
+        body: JSON.stringify({
+          skillId: skill.id,
+          skillName: skill.skill_name
+        })
       })
       const data = await res.json()
-      if (!res.ok) throw new Error(data.error)
-      
-      setExamModal(prev => ({ ...prev, link: data.examLink, expires: data.expiresAt, loading: false }))
-    } catch (error) {
-      toast.error(error.message)
-      setExamModal({ open: false, skill: null, link: '', expires: '', loading: false })
+      if (data.success) {
+        setExamModal({
+          skill,
+          examLink: data.examLink,
+          expiresAt: data.expiresAt
+        })
+      } else {
+        toast.error(data.error || 'Failed to generate exam')
+      }
+    } catch(e) {
+      toast.error('Error generating exam')
+    } finally {
+      setGeneratingExam(null)
     }
   }
 
-  const copyLink = () => {
-    navigator.clipboard.writeText(examModal.link)
-    toast.success('Exam link copied!')
-  }
+  const filtered = skills.filter(skill => {
+    const matchesFilter = filter === 'all' ||
+      (filter === 'learned' && skill.is_learned) ||
+      (filter === 'verified' && skill.is_verified)
+    const matchesSearch = !search || 
+      skill.skill_name.toLowerCase()
+        .includes(search.toLowerCase())
+    return matchesFilter && matchesSearch
+  })
+
+  const filters = [
+    { value: 'all', label: 'All' },
+    { value: 'learned', label: 'Learned' },
+    { value: 'verified', label: 'Verified' },
+  ]
 
   return (
-    <div className="space-y-4">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <h3 className="text-xl font-bold text-white">My Skills 🧠</h3>
-        <div className="flex bg-card border border-border rounded-lg p-1">
-          {['all', 'learned', 'verified'].map(f => (
+    <div className="bg-[#12121A] border border-white/5 
+      rounded-2xl p-5">
+
+      {/* Header */}
+      <div className="flex items-center justify-between 
+        mb-4 flex-wrap gap-3">
+        <div className="flex items-center gap-2">
+          <div className="w-7 h-7 rounded-lg 
+            bg-purple-500/10 flex items-center 
+            justify-center">
+            <Star size={14} className="text-purple-400" />
+          </div>
+          <h3 className="text-white font-bold text-sm">
+            My Skills
+          </h3>
+          <span className="text-white/30 text-xs">
+            {skills.length}
+          </span>
+        </div>
+
+        {/* Filters */}
+        <div className="flex gap-1">
+          {filters.map(f => (
             <button
-              key={f}
-              onClick={() => setFilter(f)}
-              className={cn("px-4 py-1.5 rounded-md text-sm font-medium capitalize transition-all", filter === f ? "bg-purple text-white shadow-sm" : "text-text-muted hover:text-white")}
+              key={f.value}
+              onClick={() => setFilter(f.value)}
+              className={`px-3 py-1.5 rounded-lg 
+                text-xs font-medium transition-colors
+                ${filter === f.value
+                  ? 'bg-purple-600 text-white'
+                  : 'text-white/40 hover:text-white hover:bg-white/5'}`}
             >
-              {f}
+              {f.label}
             </button>
           ))}
         </div>
       </div>
 
-      {filteredSkills.length === 0 ? (
-        <div className="glass p-12 rounded-3xl border border-border text-center flex flex-col items-center">
-          <div className="w-16 h-16 bg-purple/10 text-purple rounded-full flex items-center justify-center mb-4">
-            <Brain size={32} />
+      {/* Empty state */}
+      {filtered.length === 0 ? (
+        <div className="text-center py-10">
+          <div className="w-12 h-12 rounded-2xl 
+            bg-purple-500/10 flex items-center 
+            justify-center mx-auto mb-3">
+            <Star size={24} 
+              className="text-purple-400/50" />
           </div>
-          <p className="text-white font-bold text-lg mb-1">No skills here yet</p>
-          <p className="text-text-secondary text-sm">Complete daily missions to earn skills and unfold your portfolio.</p>
+          <p className="text-white/50 text-sm 
+            font-medium mb-1">
+            {filter === 'all' 
+              ? 'No skills yet'
+              : `No ${filter} skills yet`}
+          </p>
+          <p className="text-white/25 text-xs">
+            {filter === 'all'
+              ? 'Complete daily missions to earn skills'
+              : `Complete missions to add ${filter} skills`}
+          </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          <AnimatePresence>
-            {filteredSkills.map(skill => (
-              <motion.div
-                key={skill.id}
-                layout
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                className={cn(
-                  "glass p-5 rounded-2xl border flex flex-col bg-card",
-                  skill.is_verified ? "border-green/50 shadow-[0_0_15px_rgba(0,245,160,0.1)]" : "border-border"
-                )}
-              >
-                <div className="flex justify-between items-start mb-3">
-                  <span className="text-[10px] uppercase font-bold px-2 py-1 rounded bg-purple/10 text-purple-light border border-purple/20">
-                    {skill.category || 'Tech'}
+        <div className="grid grid-cols-2 md:grid-cols-3 
+          gap-3">
+          {filtered.map((skill, i) => (
+            <motion.div
+              key={skill.id}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: i * 0.04 }}
+              className={`relative p-3 rounded-xl 
+                border transition-all duration-200
+                ${skill.is_verified
+                  ? 'border-green-500/30 bg-green-500/5'
+                  : 'border-white/5 bg-white/3 hover:bg-white/5'}`}
+            >
+              {/* Skill name */}
+              <p className="text-white text-xs 
+                font-semibold mb-1 truncate">
+                {skill.skill_name}
+              </p>
+
+              {/* Category */}
+              {skill.category && (
+                <p className="text-white/30 text-[10px] 
+                  mb-2 capitalize truncate">
+                  {skill.category.replace(/_/g, ' ')}
+                </p>
+              )}
+
+              {/* Status */}
+              {skill.is_verified ? (
+                <div className="flex items-center gap-1">
+                  <CheckCircle size={11} 
+                    className="text-green-400" />
+                  <span className="text-green-400 
+                    text-[10px] font-medium">
+                    Verified
                   </span>
-                  {skill.is_verified ? (
-                    <span className="flex items-center gap-1 text-xs font-bold text-green bg-green/10 px-2 py-1 rounded border border-green/20">
-                      <CheckCircle2 size={14} /> Verified
-                    </span>
-                  ) : (
-                    <span className="flex items-center gap-1 text-xs font-bold text-yellow-500 bg-yellow-500/10 px-2 py-1 rounded border border-yellow-500/20">
-                      <ShieldAlert size={14} /> Learned
-                    </span>
-                  )}
                 </div>
-                
-                <h4 className="font-bold text-lg text-white mb-auto">{skill.skill_name}</h4>
-                
-                <div className="mt-4 pt-4 border-t border-border flex items-center justify-between">
-                  <span className="text-xs text-text-muted capitalize">Level: {skill.proficiency_level}</span>
-                  {!skill.is_verified && (
-                    <Button size="sm" variant="outline" className="h-8 text-xs px-3 border-purple text-purple hover:bg-purple hover:text-white" onClick={() => handleVerifyClick(skill)}>
-                      Verify Now
-                    </Button>
-                  )}
-                </div>
-              </motion.div>
-            ))}
-          </AnimatePresence>
+              ) : skill.is_learned ? (
+                <button
+                  onClick={() => generateExam(skill)}
+                  disabled={generatingExam === skill.id}
+                  className="flex items-center gap-1
+                    text-purple-400 hover:text-purple-300
+                    transition-colors"
+                >
+                  <Clock size={11} />
+                  <span className="text-[10px] font-medium">
+                    {generatingExam === skill.id
+                      ? 'Generating...'
+                      : 'Verify Now'}
+                  </span>
+                </button>
+              ) : null}
+            </motion.div>
+          ))}
         </div>
       )}
 
-      <AnimatePresence>
-        {examModal.open && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => !examModal.loading && setExamModal({ open: false })} className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="glass relative z-10 w-full max-w-md bg-card rounded-3xl border border-border shadow-2xl p-6 md:p-8"
-            >
-              <button onClick={() => !examModal.loading && setExamModal({ open: false })} className="absolute top-4 right-4 text-text-muted hover:text-white"><X size={24} /></button>
-              
-              {examModal.loading ? (
-                <div className="py-12 flex flex-col items-center justify-center text-center">
-                  <Loader2 size={48} className="text-purple animate-spin mb-6" />
-                  <h3 className="text-xl font-bold text-white mb-2">Generating your exam...</h3>
-                  <p className="text-sm text-text-secondary">Our AI is crafting specialized questions for {examModal.skill?.skill_name}</p>
-                </div>
-              ) : (
-                <div className="text-center">
-                  <div className="w-16 h-16 bg-green/10 text-green rounded-full flex items-center justify-center mx-auto mb-4 border border-green/20">
-                    <CheckCircle2 size={32} />
-                  </div>
-                  <h3 className="text-2xl font-display font-bold text-white mb-2">Your Exam is Ready!</h3>
-                  <p className="text-sm text-text-secondary mb-6">Proctoring is enabled. Ensure you have a working camera.</p>
+      {/* Exam modal */}
+      {examModal && (
+        <ExamLinkModal
+          skill={examModal.skill}
+          examLink={examModal.examLink}
+          expiresAt={examModal.expiresAt}
+          onClose={() => setExamModal(null)}
+        />
+      )}
+    </div>
+  )
+}
 
-                  <div className="bg-background border border-border rounded-xl p-4 mb-6">
-                    <div className="w-48 h-48 bg-white mx-auto rounded-lg mb-4 flex items-center justify-center border-4 border-white shadow-sm overflow-hidden">
-                      <QrCode size={120} className="text-black" />
-                    </div>
-                    <div className="flex items-center gap-2 bg-card border border-border rounded-lg p-2">
-                      <input type="text" readOnly value={examModal.link} className="flex-1 bg-transparent text-xs text-text-muted outline-none px-2 truncate" />
-                      <button onClick={copyLink} className="p-2 bg-purple text-white rounded hover:bg-purple-light transition-colors"><Copy size={16} /></button>
-                    </div>
-                  </div>
+function ExamLinkModal({ skill, examLink, 
+  expiresAt, onClose }) {
+  const [copied, setCopied] = useState(false)
 
-                  <div className="grid grid-cols-2 gap-4 mb-6">
-                    <div className="bg-orange-500/10 border border-orange-500/20 p-3 rounded-xl text-center">
-                      <p className="text-xs text-orange-500 font-bold uppercase mb-1">Expires In</p>
-                      <p className="text-lg font-bold text-white">60 mins</p>
-                    </div>
-                    <div className="bg-purple/10 border border-purple/20 p-3 rounded-xl text-center">
-                      <p className="text-xs text-purple-light font-bold uppercase mb-1">Questions</p>
-                      <p className="text-lg font-bold text-white">10 items</p>
-                    </div>
-                  </div>
+  function copyLink() {
+    navigator.clipboard.writeText(examLink)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
 
-                  <a href={examModal.link} target="_blank" rel="noreferrer" className="flex items-center justify-center w-full h-12 bg-white text-black font-bold rounded-xl hover:bg-gray-200 transition-colors">
-                    Start Exam on Desktop <ExternalLink size={18} className="ml-2" />
-                  </a>
-                </div>
-              )}
-            </motion.div>
+  return (
+    <div className="fixed inset-0 bg-black/80 
+      backdrop-blur-sm z-50 flex items-center 
+      justify-center p-4">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95, y: 10 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        className="bg-[#0D0D16] border border-white/10
+          rounded-2xl p-6 max-w-md w-full"
+      >
+        <div className="flex items-center 
+          justify-between mb-5">
+          <div>
+            <h3 className="text-white font-bold">
+              Exam Ready
+            </h3>
+            <p className="text-white/40 text-sm">
+              {skill.skill_name}
+            </p>
           </div>
-        )}
-      </AnimatePresence>
+          <button onClick={onClose}
+            className="text-white/30 hover:text-white
+              text-xl leading-none transition-colors">
+            ×
+          </button>
+        </div>
+
+        {/* Instructions */}
+        <div className="bg-blue-500/10 border 
+          border-blue-500/20 rounded-xl p-4 mb-4">
+          <p className="text-blue-400 text-xs 
+            leading-relaxed">
+            Open this link on your laptop. 
+            Camera access required. 
+            Link expires in 1 hour.
+          </p>
+        </div>
+
+        {/* Link */}
+        <div className="bg-[#0A0A0F] border 
+          border-white/10 rounded-xl p-3 mb-4
+          flex items-center gap-3">
+          <p className="text-white/60 text-xs 
+            flex-1 truncate font-mono">
+            {examLink}
+          </p>
+          <button
+            onClick={copyLink}
+            className="text-xs px-3 py-1.5 
+              bg-purple-600 text-white rounded-lg
+              hover:bg-purple-500 transition-colors
+              flex-shrink-0"
+          >
+            {copied ? 'Copied!' : 'Copy'}
+          </button>
+        </div>
+
+        {/* QR Code */}
+        <div className="text-center mb-4">
+          <img
+            src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(examLink)}`}
+            alt="QR Code"
+            className="w-32 h-32 mx-auto rounded-xl"
+          />
+          <p className="text-white/30 text-xs mt-2">
+            Scan on your laptop/desktop
+          </p>
+        </div>
+
+        <button onClick={onClose}
+          className="w-full py-2.5 border 
+            border-white/10 text-white/50 
+            rounded-xl text-sm hover:text-white
+            transition-colors">
+          Close
+        </button>
+      </motion.div>
     </div>
   )
 }

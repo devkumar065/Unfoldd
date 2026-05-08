@@ -4,6 +4,20 @@ import { useEffect, useRef } from 'react'
 import { gsap } from 'gsap'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
+import { 
+  Rocket, 
+  Building2, 
+  Lock, 
+  Sun, 
+  Flame, 
+  Zap, 
+  Calendar, 
+  Brain, 
+  CheckCircle2, 
+  Send, 
+  Target, 
+  Check 
+} from 'lucide-react'
 
 export default function HeroSection() {
   const sectionRef = useRef(null)
@@ -104,7 +118,10 @@ export default function HeroSection() {
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75" />
             <span className="relative inline-flex rounded-full h-2 w-2 bg-purple-500" />
           </span>
-          <span className="text-purple-300 text-sm font-medium">🚀 Now with AI-Powered Career Roadmaps</span>
+          <span className="text-purple-300 text-sm font-medium flex items-center gap-2">
+            <Rocket size={14} className="text-purple-400" />
+            Now with AI-Powered Career Roadmaps
+          </span>
         </motion.div>
 
         <h1 ref={headlineRef} className="text-5xl md:text-7xl lg:text-8xl font-black leading-none mb-6 overflow-hidden" style={{ fontFamily: 'Space Grotesk' }}>
@@ -156,7 +173,7 @@ export default function HeroSection() {
               whileTap={{ scale: 0.97 }}
               className="px-8 py-4 rounded-2xl text-white/70 hover:text-white font-semibold text-lg border border-white/10 hover:border-white/20 backdrop-blur-sm transition-all duration-300 flex items-center justify-center gap-2 w-full sm:w-auto"
             >
-              🏢 Hire Students
+              <Building2 size={20} className="text-cyan-400" /> Hire Students
             </motion.button>
           </Link>
         </motion.div>
@@ -200,7 +217,7 @@ export default function HeroSection() {
             </div>
             <div className="flex-1 mx-4">
               <div className="bg-[#1A1A2E] rounded-lg px-3 py-1.5 text-white/30 text-xs flex items-center gap-2 max-w-md mx-auto">
-                <span>🔒</span> unfoldd.me/dashboard
+                <Lock size={10} className="text-white/20" /> unfoldd.me/dashboard
               </div>
             </div>
           </div>
@@ -209,13 +226,20 @@ export default function HeroSection() {
             <div className="col-span-2 space-y-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <div className="text-white font-bold text-lg">Good morning, Ajay ☀️</div>
+                  <div className="text-white font-bold text-lg flex items-center gap-2">
+                    Good morning, Ajay <Sun size={18} className="text-yellow-400" />
+                  </div>
                   <div className="text-white/40 text-sm">Day 23 of your 90-day journey</div>
                 </div>
                 <div className="flex gap-2">
-                  {['🔥 23', '⚡ 2,450', '📅 23/90'].map((stat, i) => (
-                    <div key={i} className="px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-white/70 text-xs font-medium">
-                      {stat}
+                  {[
+                    { icon: Flame, val: '23', color: 'text-orange-400' },
+                    { icon: Zap, val: '2,450', color: 'text-yellow-400' },
+                    { icon: Calendar, val: '23/90', color: 'text-cyan-400' }
+                  ].map((stat, i) => (
+                    <div key={i} className="px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-white/70 text-xs font-bold flex items-center gap-1.5">
+                      <stat.icon size={12} className={stat.color} />
+                      {stat.val}
                     </div>
                   ))}
                 </div>
@@ -235,9 +259,9 @@ export default function HeroSection() {
                   ].map((task, i) => (
                     <motion.div key={i} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 2 + i * 0.3 }} className="flex items-center gap-3 py-1">
                       <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center text-xs ${task.done ? 'bg-purple-500 border-purple-500' : 'border-white/20'}`}>
-                        {task.done && '✓'}
+                        {task.done && <Check size={10} className="text-white" />}
                       </div>
-                      <span className={`text-[10px] px-2 py-0.5 rounded font-black tracking-widest ${task.type === 'LEARN' ? 'bg-blue-500/20 text-blue-400' : task.type === 'BUILD' ? 'bg-green-500/20 text-green-400' : 'bg-orange-500/20 text-orange-400'}`}>
+                      <span className={`text-[10px] px-2 py-0.5 rounded font-black tracking-widest ${task.type === 'LEARN' ? 'bg-blue-500/20 text-blue-400' : task.type === 'BUILD' ? 'bg-green-500/20 text-green-400' : task.type === 'APPLY' ? 'bg-orange-500/20 text-orange-400' : ''}`}>
                         {task.type}
                       </span>
                       <span className={`text-sm flex-1 font-medium ${task.done ? 'text-white/40 line-through' : 'text-white'}`}>
@@ -253,13 +277,15 @@ export default function HeroSection() {
 
               <div className="grid grid-cols-4 gap-3">
                 {[
-                  { icon: '🔥', val: '23', label: 'Streak' },
-                  { icon: '🧠', val: '12', label: 'Skills' },
-                  { icon: '✅', val: '4', label: 'Verified' },
-                  { icon: '📩', val: '8', label: 'Applied' },
+                  { icon: Flame, val: '23', label: 'Streak', color: 'text-orange-400' },
+                  { icon: Brain, val: '12', label: 'Skills', color: 'text-purple-400' },
+                  { icon: CheckCircle2, val: '4', label: 'Verified', color: 'text-green-400' },
+                  { icon: Send, val: '8', label: 'Applied', color: 'text-cyan-400' },
                 ].map((stat, i) => (
                   <motion.div key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 2.5 + i * 0.1 }} className="bg-white/5 rounded-xl p-3 border border-white/5 text-center">
-                    <div className="text-xl mb-1">{stat.icon}</div>
+                    <div className="flex justify-center mb-1">
+                      <stat.icon size={20} className={stat.color} />
+                    </div>
                     <div className="text-white font-bold text-sm">{stat.val}</div>
                     <div className="text-white/30 text-[10px] font-medium uppercase tracking-wider">{stat.label}</div>
                   </motion.div>
@@ -274,14 +300,16 @@ export default function HeroSection() {
                   {['React', 'JavaScript', 'CSS', 'Git'].map((skill, i) => (
                     <motion.div key={i} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 2.5 + i * 0.2 }} className="flex items-center justify-between">
                       <span className="text-white/80 text-sm font-medium">{skill}</span>
-                      <span className="text-green-400 text-xs">✅</span>
+                      <CheckCircle2 size={12} className="text-green-400" />
                     </motion.div>
                   ))}
                 </div>
               </div>
 
               <div className="bg-gradient-to-br from-cyan-500/10 to-transparent border border-cyan-500/20 rounded-xl p-4">
-                <div className="text-cyan-400 text-[10px] uppercase tracking-widest font-bold mb-2">Top Match 🎯</div>
+                <div className="text-cyan-400 text-[10px] uppercase tracking-widest font-bold mb-2 flex items-center gap-1.5">
+                  <Target size={10} /> Top Match
+                </div>
                 <div className="text-white text-sm font-bold">Razorpay</div>
                 <div className="text-white/60 text-xs mb-3 font-medium">Frontend Intern</div>
                 <div className="flex items-center gap-2">

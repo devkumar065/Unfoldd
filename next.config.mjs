@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
 
-  // Optimize package imports — huge win
+  // Optimize package imports
   experimental: {
     optimizePackageImports: [
       'framer-motion',
@@ -13,9 +13,11 @@ const nextConfig = {
       'gsap',
       'date-fns',
     ],
+
     // Partial prerendering
     ppr: false,
-    // Turbopack for dev (faster HMR)
+
+    // Turbopack config
     turbo: {
       rules: {
         '*.svg': {
@@ -28,8 +30,8 @@ const nextConfig = {
 
   // Compiler optimizations
   compiler: {
-    // Remove console.log in production
-    removeConsole: process.env.NODE_ENV === 'production'
+    removeConsole:
+      process.env.NODE_ENV === 'production'
         ? { exclude: ['error', 'warn'] }
         : false,
   },
@@ -37,19 +39,36 @@ const nextConfig = {
   // Image optimization
   images: {
     remotePatterns: [
-      { protocol: 'https', hostname: 'img.youtube.com' },
-      { protocol: 'https', hostname: '*.supabase.co' },
-      { protocol: 'https', hostname: 'lh3.googleusercontent.com' },
-      { protocol: 'https', hostname: 'api.qrserver.com' },
-      { protocol: 'https', hostname: 'srklrlzewvozsvebzgvm.supabase.co' }
+      {
+        protocol: 'https',
+        hostname: 'img.youtube.com',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.supabase.co',
+      },
+      {
+        protocol: 'https',
+        hostname: 'lh3.googleusercontent.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'api.qrserver.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'srklrlzewvozsvebzgvm.supabase.co',
+      },
     ],
+
     formats: ['image/avif', 'image/webp'],
-    minimumCacheTTL: 86400, // 24 hours
+    minimumCacheTTL: 86400,
+
     deviceSizes: [640, 750, 828, 1080, 1200],
     imageSizes: [16, 32, 48, 64, 96, 128],
   },
 
-  // Headers for caching
+  // Headers
   async headers() {
     return [
       {
@@ -61,6 +80,7 @@ const nextConfig = {
           },
         ],
       },
+
       {
         source: '/_next/static/(.*)',
         headers: [
@@ -70,6 +90,7 @@ const nextConfig = {
           },
         ],
       },
+
       {
         source: '/api/(.*)',
         headers: [
@@ -82,7 +103,7 @@ const nextConfig = {
     ]
   },
 
-  // Security headers
+  // Redirects
   async redirects() {
     return [
       {
@@ -93,35 +114,43 @@ const nextConfig = {
     ]
   },
 
-  // Standalone output
+  // Standalone build
   output: 'standalone',
+
   poweredByHeader: false,
 
-  // Webpack optimizations
-  webpack: (config, { dev, isServer }) => {
-    // Production optimizations
+  // Webpack config
+  webpack: (config, { dev, isServer, webpack }) => {
+
+    // Production optimization
     if (!dev) {
       config.optimization = {
         ...config.optimization,
+
         moduleIds: 'deterministic',
+
         splitChunks: {
           chunks: 'all',
+
           minSize: 20000,
           maxSize: 244000,
+
           cacheGroups: {
-            // Separate vendor chunks
+
             framework: {
               name: 'framework',
               test: /[\\/]node_modules[\\/](react|react-dom|next)[\\/]*/,
               priority: 40,
               enforce: true,
             },
+
             framerMotion: {
               name: 'framer-motion',
               test: /[\\/]node_modules[\\/]framer-motion[\\/]*/,
               priority: 30,
               enforce: true,
             },
+
             commons: {
               name: 'commons',
               minChunks: 2,
@@ -132,20 +161,22 @@ const nextConfig = {
       }
     }
 
-    // Ignore large unused modules
+    // Ignore moment locales
     config.plugins.push(
-      new (require('webpack').IgnorePlugin)({
+      new webpack.IgnorePlugin({
         resourceRegExp: /^\.\/locale$/,
         contextRegExp: /moment$/,
       })
     )
 
+    // Client-side fallbacks
     if (!isServer) {
       config.resolve.fallback = {
         ...config.resolve.fallback,
+
         fs: false,
         encoding: false,
-      };
+      }
     }
 
     return config

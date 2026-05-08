@@ -3,7 +3,6 @@ import { ThemeProvider } from 'next-themes'
 import { Toaster } from 'sonner'
 import './globals.css'
 import QueryProvider from '@/lib/providers/QueryProvider'
-import { MobileNav } from '@/components/layout/MobileNav'
 import ServiceWorkerRegistration from '@/components/layout/ServiceWorkerRegistration'
 
 const inter = Inter({
@@ -21,7 +20,7 @@ const spaceGrotesk = Space_Grotesk({
   display: 'swap',
   preload: true,
   fallback: ['system-ui', 'arial'],
-  weight: ['600', '700', '800'],
+  weight: ['600', '700'],
 })
 
 export const metadata = {
@@ -109,7 +108,6 @@ export default function RootLayout({ children }) {
             disableTransitionOnChange
           >
             {children}
-            <MobileNav />
             <Toaster
               position="bottom-right"
               duration={3000}

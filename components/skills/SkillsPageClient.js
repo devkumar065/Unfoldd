@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { CheckCircle2, Search, Plus, ExternalLink, ShieldAlert, Award, Filter, X } from 'lucide-react'
+import { CheckCircle2, Search, Plus, ExternalLink, ShieldAlert, Award, Filter, X, Brain } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils/cn'
@@ -32,14 +32,16 @@ export default function SkillsPageClient({ profile, initialSkills, roadmap }) {
     setShowAddModal(false)
     setNewSkill('')
     toast.success('Skill added to your profile!')
-    // In a real app, send a POST request to add the skill to Supabase
   }
 
   return (
     <div className="space-y-8">
       <div className="flex flex-col md:flex-row justify-between gap-6 items-start md:items-end">
         <div>
-          <h1 className="text-4xl font-display font-black text-white tracking-tight mb-2">My Skills 🧠</h1>
+          <div className="flex items-center gap-3 mb-2">
+            <h1 className="text-4xl font-display font-black text-white tracking-tight">My Skills</h1>
+            <Brain size={32} className="text-purple-400" />
+          </div>
           <p className="text-text-secondary text-lg">Manage your expertise and verifications</p>
         </div>
         <div className="flex gap-4">
@@ -65,8 +67,9 @@ export default function SkillsPageClient({ profile, initialSkills, roadmap }) {
       <div className="glass p-4 rounded-[2rem] border border-border bg-card/40 flex flex-col lg:flex-row gap-4 sticky top-24 z-30 shadow-lg backdrop-blur-2xl">
         <div className="flex bg-background border border-border rounded-xl p-1 overflow-x-auto hide-scrollbar">
            {['all', 'verified', 'learned', 'pending'].map(tab => (
-             <button key={tab} onClick={()=>setActiveTab(tab)} className={cn("px-6 py-2.5 rounded-lg text-xs font-black uppercase tracking-widest transition-all capitalize whitespace-nowrap", activeTab === tab ? "bg-purple text-white shadow-md shadow-purple/20" : "text-text-muted hover:text-white")}>
-               {tab === 'verified' ? '✅ ' : ''}{tab}
+             <button key={tab} onClick={()=>setActiveTab(tab)} className={cn("px-6 py-2.5 rounded-lg text-xs font-black uppercase tracking-widest transition-all capitalize whitespace-nowrap flex items-center gap-2", activeTab === tab ? "bg-purple text-white shadow-md shadow-purple/20" : "text-text-muted hover:text-white")}>
+               {tab === 'verified' && <CheckCircle2 size={14} />}
+               {tab}
              </button>
            ))}
         </div>
@@ -94,7 +97,7 @@ export default function SkillsPageClient({ profile, initialSkills, roadmap }) {
                    </div>
                  ) : skill.is_learned ? (
                    <div className="px-3 py-1 rounded-lg bg-yellow-500/10 text-yellow-500 border border-yellow-500/30 text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 shadow-sm">
-                     Learned ✓
+                     <CheckCircle2 size={12} /> Learned
                    </div>
                  ) : (
                    <div className="px-3 py-1 rounded-lg bg-background border border-border text-text-muted text-[10px] font-black uppercase tracking-widest">

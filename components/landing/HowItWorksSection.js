@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react'
 import { gsap } from 'gsap'
 import { motion } from 'framer-motion'
+import { Map, Target, Briefcase, Sparkles, CheckCircle2, Lock } from 'lucide-react'
 
 export default function HowItWorksSection() {
   const sectionRef = useRef(null)
@@ -40,7 +41,7 @@ export default function HowItWorksSection() {
       description: 'Tell Unfoldd your target role, college schedule, and daily time. Our AI builds your exact 90-day plan — not a generic course, but your specific path from where you are to where you want to be.',
       features: ['Fitted around your class timetable', 'Adjusts before your exam dates', 'Updates based on your progress', 'Role-specific skill progression'],
       color: '#6C63FF',
-      emoji: '🗺️'
+      icon: Map
     },
     {
       number: '02',
@@ -49,7 +50,7 @@ export default function HowItWorksSection() {
       description: 'Each day: watch a curated video (cannot skip), complete a hands-on build task, apply to one matched internship. Pass our proctored exam to earn an officially verified skill badge.',
       features: ['Anti-skip video learning', 'Three-level knowledge tests', 'AI camera-monitored exams', 'Official verified badges'],
       color: '#00D4FF',
-      emoji: '🎯'
+      icon: Target
     },
     {
       number: '03',
@@ -58,15 +59,15 @@ export default function HowItWorksSection() {
       description: 'Your auto-built portfolio shows verified skills that companies trust. Your resume scores itself for ATS. Companies on Unfoldd filter specifically for verified candidates — putting you ahead of the crowd.',
       features: ['Auto-updating portfolio', 'ATS-optimized resume', 'Smart internship matching', 'Priority company placement'],
       color: '#00F5A0',
-      emoji: '💼'
+      icon: Briefcase
     }
   ]
 
   return (
     <section ref={sectionRef} id="how-it-works" className="relative bg-[#0A0A0F] overflow-hidden">
       <div className="text-center pt-32 pb-10 px-6 relative z-10">
-        <div className="inline-block px-4 py-1.5 rounded-full border border-purple-500/30 bg-purple-500/10 text-purple-400 text-[10px] font-black uppercase tracking-widest mb-6 shadow-sm">
-          ✨ The Process
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-purple-500/30 bg-purple-500/10 text-purple-400 text-[10px] font-black uppercase tracking-widest mb-6 shadow-sm">
+          <Sparkles size={12} /> The Process
         </div>
         <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-white tracking-tight" style={{ fontFamily: 'Space Grotesk' }}>
           Three Steps to{' '}
@@ -84,7 +85,9 @@ export default function HowItWorksSection() {
               
               <div className="order-2 lg:order-1">
                 <div className="text-8xl md:text-9xl font-black mb-6 opacity-10 leading-none" style={{ color: step.color, fontFamily: 'Space Grotesk' }}>{step.number}</div>
-                <div className="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-4xl mb-8 shadow-xl">{step.emoji}</div>
+                <div className="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-4xl mb-8 shadow-xl">
+                  <step.icon size={32} style={{ color: step.color }} />
+                </div>
                 <h3 className="text-4xl md:text-5xl font-black text-white mb-4 tracking-tight" style={{ fontFamily: 'Space Grotesk' }}>{step.title}</h3>
                 <p className="font-bold text-lg mb-6 uppercase tracking-wider" style={{ color: step.color }}>{step.subtitle}</p>
                 <p className="text-white/50 leading-relaxed mb-10 text-lg font-medium">{step.description}</p>
@@ -92,7 +95,9 @@ export default function HowItWorksSection() {
                 <ul className="space-y-4">
                   {step.features.map((f, j) => (
                     <li key={j} className="flex items-center gap-4 text-white/70 font-medium">
-                      <div className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] flex-shrink-0 shadow-md" style={{ background: step.color + '20', color: step.color, border: `1px solid ${step.color}40` }}>✓</div>
+                      <div className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] flex-shrink-0 shadow-md" style={{ background: step.color + '20', color: step.color, border: `1px solid ${step.color}40` }}>
+                        <CheckCircle2 size={10} />
+                      </div>
                       {f}
                     </li>
                   ))}
@@ -145,8 +150,8 @@ function LearningMockup() {
       </div>
       <div className="grid grid-cols-3 gap-3">
         {['EASY', 'MEDIUM', 'HARD'].map((l, i) => (
-          <div key={i} className={`text-center py-3 rounded-xl text-[10px] font-black tracking-widest ${i < 2 ? 'bg-[#00F5A0]/10 text-[#00F5A0] border border-[#00F5A0]/20' : 'bg-white/5 text-white/30 border border-white/5'}`}>
-            {l} {i < 2 ? '✓' : '🔒'}
+          <div key={i} className={`text-center py-3 rounded-xl text-[10px] font-black tracking-widest flex items-center justify-center gap-1.5 ${i < 2 ? 'bg-[#00F5A0]/10 text-[#00F5A0] border border-[#00F5A0]/20' : 'bg-white/5 text-white/30 border border-white/5'}`}>
+            {l} {i < 2 ? <CheckCircle2 size={10} /> : <Lock size={10} />}
           </div>
         ))}
       </div>
@@ -163,7 +168,7 @@ function HiringMockup() {
         { co: 'CRED', role: 'Full Stack Intern', match: 87, color: '#00D4FF' },
         { co: 'Zepto', role: 'React Developer', match: 79, color: '#6C63FF' },
       ].map((job, i) => (
-        <motion.div key={i} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.15 }} className="flex items-center justify-between p-4 rounded-2xl bg-white/5 border border-white/5 hover:border-white/20 transition-colors">
+        <motion.div key={i} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.15 }} className="flex items-center justify-between p-4 rounded-2xl bg-white/5 border border-white/5 hover:border-white/20 transition-colors">
           <div className="flex gap-3 items-center">
             <div className="w-10 h-10 rounded-xl flex items-center justify-center font-black text-white bg-gradient-to-br from-white/10 to-transparent border border-white/10">{job.co[0]}</div>
             <div>

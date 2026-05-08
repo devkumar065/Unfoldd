@@ -77,3 +77,5 @@ export function useNotifications() {
 
   return { notifications, unreadCount, loading, markAsRead, markAllAsRead, refetch: fetchNotifications }
 }
+
+export default useNotifications
